@@ -1,0 +1,31 @@
+---
+title: "Case Study 2"
+author: "Meredith Ludlow & Kristen Rollins"
+date: "December 9, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Summary
+
+# Introduction
+
+# Analysis
+
+```{r}
+# Read in data
+employee_data <- read.csv("DataFiles/CaseStudy2-data.csv")
+```
+
+# Conclusion
+
+# Presentation
+
+This write-up is supplemented by video presentations from both Meredith and Kristen. The links are provided below.
+
+Meredith: 
+
+Kristen: 
