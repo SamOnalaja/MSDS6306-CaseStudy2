@@ -1,5 +1,5 @@
 ---
-title: "Case Study 2"
+title: "Case Study 2: Employee Data Analysis"
 author: "Meredith Ludlow & Kristen Rollins"
 date: "December 9, 2018"
 output: html_document
@@ -7,20 +7,55 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
 ```
 
 # Summary
 
+TODO (Meredith)
+
 # Introduction
+
+TODO (Kristen)
 
 # Analysis
 
+### Exploratory Data Analysis
+
 ```{r}
-# Read in data
-employee_data <- read.csv("DataFiles/CaseStudy2-data.csv")
+# Read in training data
+dfTrain <- read.csv("CaseStudy2-data.csv")
+```
+
+```{r}
+
+```
+
+### Employee Trends
+
+```{r}
+
+```
+
+### KNN Classification
+
+```{r}
+# Read in validation data
+dfVal <- read.csv("CaseStudy2Validation.csv")
+
+# Generate attrition predictions based on training data
+#dfPreds <- ?
+
+# Get accuracy of predictions
+#confusionMatrix(table(dfVal$Attrition, dfPreds$Attrition))
+
+# Write predictions to csv file
+#write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
 # Conclusion
+
+TODO (Kristen)
 
 # Presentation
 
