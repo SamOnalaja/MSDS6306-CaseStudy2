@@ -11,11 +11,12 @@ output:
 
 # Summary
 
-TODO (Meredith)
+TODO 
 
 # Introduction
 
 The purpose of this analysis is to explore what variables are most associated with attrition levels in Fotune 1000 companies. Exploratory analytics will be used to determine these variables as well as other general trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
+TODO (Kristen)
 
 # Analysis
 
@@ -45,6 +46,16 @@ No      0.8393162
 Yes     0.1606838
 
 ```r
+table(dfTrain$Attrition) / nrow(dfTrain)
+```
+
+```
+## 
+##        No       Yes 
+## 0.8393162 0.1606838
+```
+
+```r
 # Define categorical variables
 cat_vars <- c("BusinessTravel", "Department", "Education", 
               "EducationField", "EnvironmentSatisfaction",
@@ -58,12 +69,13 @@ cat_vars <- c("BusinessTravel", "Department", "Education",
 num_vars <- c("Age", "DailyRate", "DistanceFromHome", "Education", "EnvironmentSatisfaction", "HourlyRate", "JobInvolvement", "JobLevel", "JobSatisfaction", "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked", "PercentSalaryHike", "PerformanceRating", "RelationshipSatisfaction", "StandardHours", "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager", "Rand")
 
 # TODO make tables look nicer ## I was trying to use kable like above to make these look nice but it wasn't working. When I put it on the table function it errors out when you divide it by cout$freq
+
 # Make relative frequency tables for categorical variables
 for (var in cat_vars) {
   print(var)
   freqtable <- table(dfTrain[[var]], dfTrain$Attrition)
   count <- plyr::count(dfTrain[[var]])
-  print (freqtable / count$freq)
+  print(freqtable / count$freq)
 }
 ```
 
@@ -376,7 +388,7 @@ dfVal <- read.csv("CaseStudy2Validation.csv")
 
 # Conclusion
 
-TODO (Kristen)
+TODO
 
 # Presentation
 
