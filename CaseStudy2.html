@@ -134,7 +134,11 @@ $(document).ready(function () {
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
+<<<<<<< HEAD
 <p>The purpose of this analysis is to explore what variables are most associated with attrition levels in Fotune 1000 companies. Exploratory analytics will be used to determine these variables as well as other general trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.</p>
+=======
+<p>TODO (Kristen)</p>
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
@@ -146,6 +150,7 @@ dfTrain &lt;- read.csv(&quot;CaseStudy2-data.csv&quot;)
 # TODO maybe make categories for numeric vars like age, income, etc</code></pre>
 <p>If a variable did not have a significant impact on turnover, we would expect that the attrition percentage within a group is the same as the attrition percentage in the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative percentages for turnover for each categorical variable, those groups with high attrition percentages appear to have a strong impact on turnover.</p>
 <pre class="r"><code># Percentage of retained/lost employees
+<<<<<<< HEAD
 kable(table(dfTrain$Attrition) / nrow(dfTrain))</code></pre>
 <table>
 <thead>
@@ -165,6 +170,12 @@ kable(table(dfTrain$Attrition) / nrow(dfTrain))</code></pre>
 </tr>
 </tbody>
 </table>
+=======
+table(dfTrain$Attrition) / nrow(dfTrain)</code></pre>
+<pre><code>## 
+##        No       Yes 
+## 0.8393162 0.1606838</code></pre>
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 <pre class="r"><code># Define categorical variables
 cat_vars &lt;- c(&quot;BusinessTravel&quot;, &quot;Department&quot;, &quot;Education&quot;, 
               &quot;EducationField&quot;, &quot;EnvironmentSatisfaction&quot;,
@@ -174,16 +185,24 @@ cat_vars &lt;- c(&quot;BusinessTravel&quot;, &quot;Department&quot;, &quot;Educa
               &quot;RelationshipSatisfaction&quot;, &quot;StockOptionLevel&quot;, 
               &quot;WorkLifeBalance&quot;)
 
+<<<<<<< HEAD
 # Define numerical variables
 num_vars &lt;- c(&quot;Age&quot;, &quot;DailyRate&quot;, &quot;DistanceFromHome&quot;, &quot;Education&quot;, &quot;EnvironmentSatisfaction&quot;, &quot;HourlyRate&quot;, &quot;JobInvolvement&quot;, &quot;JobLevel&quot;, &quot;JobSatisfaction&quot;, &quot;MonthlyIncome&quot;, &quot;MonthlyRate&quot;, &quot;NumCompaniesWorked&quot;, &quot;PercentSalaryHike&quot;, &quot;PerformanceRating&quot;, &quot;RelationshipSatisfaction&quot;, &quot;StandardHours&quot;, &quot;StockOptionLevel&quot;, &quot;TotalWorkingYears&quot;, &quot;TrainingTimesLastYear&quot;, &quot;WorkLifeBalance&quot;, &quot;YearsAtCompany&quot;, &quot;YearsInCurrentRole&quot;, &quot;YearsSinceLastPromotion&quot;, &quot;YearsWithCurrManager&quot;, &quot;Rand&quot;)
 
 # TODO make tables look nicer ## I was trying to use kable like above to make these look nice but it wasn't working. When I put it on the table function it errors out when you divide it by cout$freq
+=======
+# TODO make tables look nicer
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 # Make relative frequency tables for categorical variables
 for (var in cat_vars) {
   print(var)
   freqtable &lt;- table(dfTrain[[var]], dfTrain$Attrition)
   count &lt;- plyr::count(dfTrain[[var]])
+<<<<<<< HEAD
   print (freqtable / count$freq)
+=======
+  print(freqtable / count$freq)
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 }</code></pre>
 <pre><code>## [1] &quot;BusinessTravel&quot;
 ##                    
@@ -305,6 +324,7 @@ for (var in cat_vars) {
 </div>
 <div id="employee-trends" class="section level3">
 <h3>Employee Trends</h3>
+<<<<<<< HEAD
 <pre class="r"><code>for (var in num_vars) {
   print(var)
   Jobs &lt;- group_by(dfTrain, JobRole) %&gt;% summarise(Med=median(var, na.rm=TRUE))
@@ -362,6 +382,8 @@ for (var in cat_vars) {
 <pre><code>## [1] &quot;Rand&quot;</code></pre>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHgCAMAAABNUi8GAAABMlBMVEUAAAAAADoAAGYAOpAAZrYAueMAujgAwZ8zMzM6AAA6ADo6AGY6OpA6kNtNTU1NTW5NTY5Nbo5NbqtNjqtNjshhnP9mAABmAGZmOpBmZmZmtrZmtttmtv9uTU1uTW5uTY5ubo5ubqtujqtujshuq6tuq+SOTU2OTW6OTY6Obk2Obm6ObquOjk2Ojm6Ojo6OjsiOyOSOyP+QOgCQOjqQOmaQkGaQ2/+TqgCrbk2rbm6rbo6rjk2rjqurq26rq46ryKur5Mir5P+2ZgC2Zjq2kDq2///Ijk3Ijm7IyI7I5KvI/8jI/+TI///TkgDbcvvbkDrbkJDbtmbb/7bb///kq27kq47k5Kvk/8jk/+Tk///r6+v4dm3/YcP/tmb/yI7/25D/5Kv//7b//8j//9v//+T///+xLKivAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAWIElEQVR4nO2dDXsdx1mG1TpAXbDsGGNasKyKRo7TJgEFEqSGNlWKVZQIBLVoK8CyLJ/9/3+Bnd2Z/Tgfsp6J/c7OnPu+ZJ+zu7Orc817e3bmSD7PRgUwYTZSvwCA60BQmDQICpMGQWHSIChMGgSFSZOhoP8DEnl2WKg2ghZPnh0Wqo2gxZNnh4VqI2jx5NlhodoIWjx5dlioNoIWT54dFqqNoMWTZ4eFamco6AZopHYtiq7aKVWLY+P/QAFBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVGMtBb16srl57yRsXW6fLLS43NrcHLa5If2l6mfLrougKuso6NWTvao6u3++YNW8aX2bGzISdHkTBNVYR0Ebea4+PGzGyb1msx5T3XB5EUbN1q/+yNXTX27erU/4yUf3TsZt263LnS/rSzXPm4u6Z8fbxzvn1ezg0J+AoDGso6Cz/XZkbBxtb8VHu9XZg1rDE/dQDUdQf+TJ/fMLJ1899o7btluXW7vVxf3z+rT+opfb3x7Uz3fO2yY1P6hBUI0MlxkDYl99PfrV46Gj9sxbVT9zDy3tHLT2MxypZwX1WNgMqaO2fssd6Ked7Y7666xWc9c3CS85dcUzYx1H0FbBx7VgR+427QStV03NLXzLi+tMu3BP/ZFGx6M9f88ftPVbQ0HDRd3Xzh+bO3z37wFBVdZR0Ivmfnu054bFVqR+gHM3ai9oddZMPtsxsRY0jKCjtn6rF7S/aP01O/hq53xwAoLKrKOgzSq+Vq6x6vGhn4PWtjk5B4LO9ts5pvPwyQM/x6zm2h6FyWevpb+oe3a2uRtOQNAo1lHQ5r7s7rlnm5vvfxTu23fDLb+qulV8vfRpj1x9+ElzW99u1+2Dtu2WF3S2f++kvWj97LhVtTsBQWNYS0EjlO6WT98VBNVA0BuBoKlAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUkd3JYdqV2Loqt2StXiSN11uZFnh4VqI2jx5NlhodoIWjx5dliodoaCpp7SZUdq16Loqp1StTg2/gMUENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1EHQJN01Dvrv6g+tXpx2nrnhmIOgiN05DvobVacepK54ZCLpCrpukIXfBsk/6yKQ2Memb1WnHqSueGQi6yI3TkF1s7DdPw9HZ/l51cf/3g8y5pWnHqSueGRkuMwa8q1d/8zRkl3U4SDwepnauSDtOXfHMYARdwZvTkLtmIfF4J6R8doIuSztOXfHMQNBFbpqG3LT69EE1SDyeE3RZ2nHqimcGgi5y0zRk9+iGSH/UzUHr5VF9Qz8LefHL0o5TVzwzEHSpoW9MQ27moJv/0KyLzv3R9qE+6YOnJ6vTjlNXPDMQ1BgE1UBQYxBUA0GNQVANBDUGQTUQ1BgE1UBQYxBUA0GNQVANBDUGQTUQ1BgE1UBQYxBUA0GNQVANBDUGQTUQ1BgE1UBQYxBUA0GNQVANBDUmdXBbdqR2LYqu2ilViyN11+VGnh0Wqo2gxZNnh4VqI2jx5NlhodoIWjx5dliodoaCpl5zZEdq16Loqp1StTg2/goUENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ELRNlLn3hvTivnkfYzxK7V6INx4FcvfPEFQDQVt3+vTtGzV3zKV2r25YIWg8CNonGI4zt/2Wj+T+yUf3Tnzc9sduRzVI7e5iuNtTLne+rFtcNYHcJ+3VBoHcCKqBoP0IOs7c9ls+kntrL8Rtb4Vgw5Da3cdwt6dcti36lE+3r/kmTRx36opnRobLjAFvbw5auzbO3B6EaPuo7VFYbHNqm9rd7R/Ecndxsv5q3OJjYQR17lz4qM1B5nYXoh0iuatR3HZ39uM+hjvEcg8F9VdD0FgQtHHnrJ4ijjO3w+jZRXIvjKAhtbsfQftY7l7Q9moIGguCNu7M9h9Uc5nbR2EmGSK527jt407QkNrd7x+cEgT1V0PQWBDUD4D1ymacue23+kjufrXudQup3cNVvL+d1398IHd7tXqDVXwUCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxqTOxcqO1K5F0VU7pWpxpO663Mizw0K1EbR48uywUG0ELZ48OyxUG0GLJ88OC9XOUNDUa47sSO1aFF21U6oWx8afgAKCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCOqITj9sT95aEHVfL9yGoCIL2KkUkHvt4mr03NBuAoBoI2qsUm3jsQhJdbJc/HkKWfv2kyzluDiFoDAjaexaReOwz5z489Mf9GaMAZBc0t9Xo3KQdp654ZmS4zBjwduegEYnH7d+zg0OfzDkIPO7iO1t9u5ecuuKZwQhaVd8h8Xg0grYzhCbwODRrMj4PEDQeBA2CRiUe+9zjJi22EbQPPGYEfSsgaCdUTOJxt4oP4dvtGcsCkBE0CgTtBI1JPB6+D9of9w8u4tiv4hE0FgQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNUoSdDTjY1Hp7eemzsngaAaBQn69a3fPXz0+rP37KVTSB3clh2pXYuiq/ag8q8ePqq/qhfff2ZvnUDqrsuNPDssVBtBiyfPDgvVHt3iT90t/tXDO/bSKaTuutzIs8NCtceLpBduyjJxP5mDqqR2LYqu2ilVi2Pjz0ABQY1BUI1CBH31sLslTHyRhKAahQiaDwiqgaDGIKhGSYKeujv85FfxqSueGQUJeupmn5N/HxRBNcoR1P0YqWbqP0lCUA0ENQZBNcoRlFt8kRQkKIukEilJ0CxAUI3yBP3PZ3a2RYCgGsUI+vXGhvtd+lcPWSQVRSmC1iuk15/dcb9x9yiJdzcGQTUKEdTJWb249a8bU/8/cwgqUoigzZugL29Pfg2PoCplCfpGPy+3HtR/H63INZ7tb+6OWo/SYJcGGutpx6krnhlFCfrDL94o6OO/O6+ufrbMnCVGLTVssYWWdpy64pmxboJuf3JYXX7qco7aBOOdL5uHJvjomyYDqdnfxRX7zC4XV1w/9c3d0fd/dtg5KKUdp654ZqydoP+2V/33V9snXYJxnyXXRHH5/V1ccTiytTdo3uTH3e0FldKOU1c8MzL8WcwA+b98XG4f/3T2i+PtuQTjwUO/v5o70j+4BM7ZQS+olHacuuKZUcgIelMut7/9lz/8fZuq2SUYjwVt9w/jihcf6qNDQaW049QVz4y1E/Tkt7/adUPbKMF4cIsfBMPeeASV0o5TVzwzShK0+eCG63+QVJtycTcMdz7B2M88z5rx1O/v4or7I8NE7vEcVEs7Tl3xzChI0Jv8PmjrkfOlTzD2Wx88Hezv44r7IwNB66N/2Y6getpx6opnRjmCGv9G/ZvfI10OgmogaASz/c1mnIwBQTXKEbRV02s6XRBUoxBB+eibUilE0HxAUA0ENQZBNUoSlP/VWSAFCcr/iy+RcgTlk0WKBEGNQVCNcgTlFl8kBQnKIqlEShI0CxBUA0GNQVCNQgTtf9Q58SxZBBUpRNCO5iNGpsw7TWUrkdSuRdFVe1GAFxP/8JvUXZcbeXZYqPYyQSf+PmjqrsuNPDssVBtBiyfPDgvVXjYHnfgqKXXX5UaeHRaqvSDoi8l//mLqNUd2pHYtiq7aKVWLY+NPQQFBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBY7k+2XslCKqBoLFcn+y9EgTVQNBYViR7V32et0vsXozjTl3xzEDQWFYke/utkJbYxnMP47hTVzwzMlxmDEgr6NJkb7/l82ZH8dwNCKrBCBrLimTvQZ63E9THcyNoLAgay4pkb78VRtBhPHcDgmogaCwrkr391mAOOhfHnbrimYGgsVyT7O3zvF1idxvPjaDRIOi7Y2liN4JqIOi7YWViN4JqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMakDm7LjtSuRdFVO6VqcaTuutzIs8NCtRG0ePLssFBtBC2ePDssVDtDQVNP6bIjtWtRdNVOqVocG/8MCghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGmsn6FyywdHejZq1uA+er7l/vrplt7X0AhWCqiDojZpds39VyxUgqMbaCupDiY8+DdnEIZS4OdBs9zs/dmHG5/3p7ZE2BOly++NB2LE77nfPxyAjaAzrKmgXStzGwPlAuK29cGC882LXffWntxnGs/36yP3fb/lmIVPO756PQa582nHqimdGhsuMAd/tFu+CNN0t/mjPPat1CsfafOLBzqufn//2sD99lGE8jEDswuf6fwijGOSKEVRlXUdQH0pcOe+OmhjD2YEXNGQXD3bODn798/OBoD7DuLnrLwra7Z6LQUbQCNZVUB9K7EbQ+pY8HCy77OLhsHr26e7g9FGG8eoRdByDjKBRrKugXSjxg2ow3fQq+eziQVKxazo4vT3iJpuX28fzgna7xzHICBrF+gm65d7KfBBCietVvIvU9Av2ZrBsDsz2u1W82zn7xejtzTbDeLBcHwra7x7HICNoDGsnaByXP31bV0JQDQS9CWdLg4ujQFANBDUGQTUQ1BgE1UBQYxBUA0GNQVANBDUGQTUQ1BgE1UBQYxBUA0GNQVANBDUGQTUQ1BgE1UBQYxBUA0GNQVANBDUGQTUQ1JjUwW3Zkdq1KLpqp1QtjtRdlxt5dlioNoIWT54dFqqNoMWTZ4eFaiNo8eTZYaHaGQqaes2RHaldi6KrdkrV4tj4d1BAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVAUGMQVANBjUFQDQQ1BkE1ENQYBNVYe0FHwYVvattE2NyT0o3nQVANBFUEbVqdjfPiRRBUA0GDoD5va3bwq83N3Yv6T7UQp93L7PO4LzZDLLdP/HLXcZnebdLXuBWCxoCg84LuP6jFbAISF+K0+xG0zeN2mZ31wzhI0cV3t4nc5+NWPo47dcUzI8NlxoC3IWgzr+xDiWcHhy7juIncrubitNu2tZ8+j7tvE1JnR9mx41bhJaeueGYwgi7c4geCzsVpu78vfEiny+N2xt5tRtmQ2x2u0yRyj1shaBQIulrQhTjtNmy2nk/6PG5HfSdfOYKOWiFoFAjapbvXQ2Yt30DQhTjtNvh4v5t1Ou0u2hmp87S9QDOeNoncJ+NWCBoDgnbqnW1ufvB0dIufj9MOM9HdkMd9NFzF+ws0jbpV/KAVgsaw9oJag6AaCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxqQObsuO1K5F0VU7pWpxpO663Mizw0K1EbR48uywUG0ELZ48OyxUO0NBU0/psiO1a1F01U6pWhwb/wsKCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxiCoBoIag6AaCGoMgmogqDEIqoGgxiCoBoIag6AapQq6IiO2zTF6c3RsZK5xf+GV3wVBNRD0mtPlXOORoMubIKhG+YL6ECOfXLz9Tb15vP1xk1/c5hj5Iz6kuB0150+/evrLpumg0TjpuElEbp43l7tqvsvxzrnLXOquiqA65QvqI4d9cnH71eYXt5nEfwiZxnuVb1sNR1B/+pP75xf3ho0GScdnDyp/xUFEsvv69uDQxXZ2V23SjlNXPDMyXGYMuEbQEGLsI4fdvja5uI/T7G/DPtO4b7uQa/xkL+TFziUdt1vjK3bf6KxWc3fwCipGUJXiR9AQOdwlFw8E3WmnmF2mcdd2Ide4zT7eGzZqM4z91lDQ4Tfa+WNzh9/s444RVKN8Qf3o2SUXz4+gg0zjfpybzzV2goYRdCHp2LdvLzL6RrODr3bOBycgqEzxgvoo4j65eJC83WQSH/eZxr5tOH2Qa3z15EG4ytKk417Q0TeqzjZ3B1dFUJ3yBfWRw11y8Wz/3rHPL24P9ZnGoe1irvHVh580t/VBoz7p2B9or33SXi58l8eHg6siqE6pgr5l/JLoLYCgGgh6IxA0FQhqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxCKqBoMYgqAaCGoOgGghqDIJqIKgxqYPbsiO1a1F01U6pWhypuy438uywUG0ELZ48OyxUG0GLJ88OC9VG0OLJs8NCtRG0ePLssFBtBC2ePDssVDtDQUHjB6lfwHcCQYsHQWHSIChMGgQFeGcgKEwaBIVJg6AwaRAUJg2Clsc1EVXuE4fzAkHL45qIKgSF9PSfje0DrJoIquZzqt//CEEhNd0IGhKn2giq5pP+NxEUUtNFVDn6CCqXlcItHtLTRVQNAqy6CCoEhdT0EVV9gBUjKEyGLqKqT5zq8q6Yg0Jy+oiqPsDK/Znts4oHeLsgKEwaBIVJg6AwaRAUJg2CwqRBUJg0CDpNXt7+/rP64dXDW89H+180u9cIBJ0mL29/74vmAUFhiry8/eM79cPpjxEUpsjL23/zo+fV63/8vBb09WcbG87LVw83vvc5gsIUeHn7b//pWfXyL/7r1vPXn71XD6W3nr96eKd2FEFhCry8/ej0UfXizotbz1+0o+ej5vEUQWEK1IK+eK/6+lEt6Gmb1XHn1E1HX/75s9QvzRYEnSa1oK9+9Lu/fuYE9eskBIXpUAta/ebz9yp3i2/ecPILeFbxMAmcoKcbd5ygrz+rh87a0lcP32ORBBPBCfryh184QZu3mdwoyttMAFMDQWHSIChMGgSFSYOgMGkQFCYNgsKkQVCYNAgKkwZBYdL8P9Djr1Xf2ezPAAAAAElFTkSuQmCC" /><!-- --></p>
 <pre class="r"><code># I wanted to generate graphs for evey numerical variable to look for trends and such. When I take this code out of the for loop and replace the var with the actual variable name it works fine. In the for loop all the graphs are messed up. Can you see anything wrong? I figure once we get a look at all of them we can specify whch ones to actually show.</code></pre>
+=======
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 </div>
 <div id="knn-classification" class="section level3">
 <h3>KNN Classification</h3>

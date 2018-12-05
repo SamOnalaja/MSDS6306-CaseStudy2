@@ -2,17 +2,24 @@
 title: "Case Study 2: Employee Data Analysis"
 author: "Meredith Ludlow & Kristen Rollins"
 date: "December 9, 2018"
+<<<<<<< HEAD
 output:
   html_document:
     keep_md: yes
+=======
+output: html_document
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
+<<<<<<< HEAD
 library(knitr)
 library(dplyr)
+=======
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 ```
 
 # Summary
@@ -21,7 +28,11 @@ TODO (Meredith)
 
 # Introduction
 
+<<<<<<< HEAD
 The purpose of this analysis is to explore what variables are most associated with attrition levels in Fotune 1000 companies. Exploratory analytics will be used to determine these variables as well as other general trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
+=======
+TODO (Kristen)
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 
 # Analysis
 
@@ -38,7 +49,11 @@ If a variable did not have a significant impact on turnover, we would expect tha
 
 ```{r}
 # Percentage of retained/lost employees
+<<<<<<< HEAD
 kable(table(dfTrain$Attrition) / nrow(dfTrain))
+=======
+table(dfTrain$Attrition) / nrow(dfTrain)
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 
 # Define categorical variables
 cat_vars <- c("BusinessTravel", "Department", "Education", 
@@ -49,16 +64,24 @@ cat_vars <- c("BusinessTravel", "Department", "Education",
               "RelationshipSatisfaction", "StockOptionLevel", 
               "WorkLifeBalance")
 
+<<<<<<< HEAD
 # Define numerical variables
 num_vars <- c("Age", "DailyRate", "DistanceFromHome", "Education", "EnvironmentSatisfaction", "HourlyRate", "JobInvolvement", "JobLevel", "JobSatisfaction", "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked", "PercentSalaryHike", "PerformanceRating", "RelationshipSatisfaction", "StandardHours", "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager", "Rand")
 
 # TODO make tables look nicer ## I was trying to use kable like above to make these look nice but it wasn't working. When I put it on the table function it errors out when you divide it by cout$freq
+=======
+# TODO make tables look nicer
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 # Make relative frequency tables for categorical variables
 for (var in cat_vars) {
   print(var)
   freqtable <- table(dfTrain[[var]], dfTrain$Attrition)
   count <- plyr::count(dfTrain[[var]])
+<<<<<<< HEAD
   print (freqtable / count$freq)
+=======
+  print(freqtable / count$freq)
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 }
 ```
 
@@ -70,6 +93,7 @@ for (var in cat_vars) {
 ### Employee Trends
 
 ```{r}
+<<<<<<< HEAD
 for (var in num_vars) {
   print(var)
   Jobs <- group_by(dfTrain, JobRole) %>% summarise(Med=median(var, na.rm=TRUE))
@@ -77,6 +101,9 @@ for (var in num_vars) {
   print(graph)
 }
 # I wanted to generate graphs for evey numerical variable to look for trends and such. When I take this code out of the for loop and replace the var with the actual variable name it works fine. In the for loop all the graphs are messed up. Can you see anything wrong? I figure once we get a look at all of them we can specify whch ones to actually show.
+=======
+
+>>>>>>> cf9470998df1fdd14f26f1d8998a3f321aa75984
 ```
 
 ### KNN Classification
