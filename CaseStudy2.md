@@ -207,167 +207,45 @@ for (var in cat_vars) {
 
 
 ```r
-for (var in num_vars) {
-  print(var)
-  Jobs <- group_by(dfTrain, JobRole) %>% summarise(Med=median(var, na.rm=TRUE))
-  graph <- ggplot(data=Jobs, aes(x=JobRole, y=Med, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
-  print(graph)
-}
+# Job satisfaction by group
+Jobs <- group_by(dfTrain, JobRole) %>% summarise(Avg=mean(JobSatisfaction, na.rm=TRUE))
+print(Jobs)
 ```
 
 ```
-## [1] "Age"
+## # A tibble: 9 x 2
+##   JobRole                     Avg
+##   <fct>                     <dbl>
+## 1 Healthcare Representative  2.80
+## 2 Human Resources            2.57
+## 3 Laboratory Technician      2.69
+## 4 Manager                    2.69
+## 5 Manufacturing Director     2.75
+## 6 Research Director          2.62
+## 7 Research Scientist         2.80
+## 8 Sales Executive            2.76
+## 9 Sales Representative       2.74
+```
+
+```r
+ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](CaseStudy2_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
-```
-## [1] "DailyRate"
-```
+We wanted to see how various factors would effect job satisfaction. The average job satisfaction for each posistion is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-2.png)<!-- -->
-
-```
-## [1] "DistanceFromHome"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-3.png)<!-- -->
-
-```
-## [1] "Education"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-4.png)<!-- -->
-
-```
-## [1] "EnvironmentSatisfaction"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-5.png)<!-- -->
-
-```
-## [1] "HourlyRate"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-6.png)<!-- -->
-
-```
-## [1] "JobInvolvement"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-7.png)<!-- -->
-
-```
-## [1] "JobLevel"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-8.png)<!-- -->
-
-```
-## [1] "JobSatisfaction"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-9.png)<!-- -->
-
-```
-## [1] "MonthlyIncome"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-10.png)<!-- -->
-
-```
-## [1] "MonthlyRate"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-11.png)<!-- -->
-
-```
-## [1] "NumCompaniesWorked"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-12.png)<!-- -->
-
-```
-## [1] "PercentSalaryHike"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-13.png)<!-- -->
-
-```
-## [1] "PerformanceRating"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-14.png)<!-- -->
-
-```
-## [1] "RelationshipSatisfaction"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-15.png)<!-- -->
-
-```
-## [1] "StandardHours"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-16.png)<!-- -->
-
-```
-## [1] "StockOptionLevel"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-17.png)<!-- -->
-
-```
-## [1] "TotalWorkingYears"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-18.png)<!-- -->
-
-```
-## [1] "TrainingTimesLastYear"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-19.png)<!-- -->
-
-```
-## [1] "WorkLifeBalance"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-20.png)<!-- -->
-
-```
-## [1] "YearsAtCompany"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-21.png)<!-- -->
-
-```
-## [1] "YearsInCurrentRole"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-22.png)<!-- -->
-
-```
-## [1] "YearsSinceLastPromotion"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-23.png)<!-- -->
-
-```
-## [1] "YearsWithCurrManager"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-24.png)<!-- -->
-
-```
-## [1] "Rand"
-```
-
-![](CaseStudy2_files/figure-html/unnamed-chunk-4-25.png)<!-- -->
 
 ```r
-# I wanted to generate graphs for evey numerical variable to look for trends and such. When I take this code out of the for loop and replace the var with the actual variable name it works fine. In the for loop all the graphs are messed up. Can you see anything wrong? I figure once we get a look at all of them we can specify whch ones to actually show.
+ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) + 
+  geom_point(pch = 21, size = 2, color="green") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
+
+![](CaseStudy2_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+Income does not appear to have an effect on job satisfaction, as every level of satisfaction has a similar distribution of income.
+
 
 ### KNN Classification
 
@@ -376,12 +254,53 @@ for (var in num_vars) {
 # Read in validation data
 dfVal <- read.csv("CaseStudy2Validation.csv")
 
+# I selected Business Travel, JobInvolvement, JobLevel, JobRole, and MAritalStatus because they looked the most different from the attrition percentages of the group as a whole. We can come up with a better justificcation later?
+
+# Convert wanted factors into integers.
+dfTrain$BusinessTravel <- as.integer(dfTrain$BusinessTravel)
+dfTrain$JobRole <- as.integer(dfTrain$JobRole)
+dfTrain$MaritalStatus <- as.integer(dfTrain$MaritalStatus)
+dfVal$MaritalStatus <- as.integer(dfVal$MaritalStatus)
+dfVal$JobRole <- as.integer(dfVal$JobRole)
+dfVal$BusinessTravel <- as.integer(dfVal$BusinessTravel)
+
 # Generate attrition predictions based on training data
-#dfPreds <- ?
+dfPreds <- class::knn(dfTrain[,c(4,15,16,17,21)], dfVal[,c(4,15,16,17,21)], dfTrain$Attrition, k=3)
 
 # Get accuracy of predictions
-#confusionMatrix(table(dfVal$Attrition, dfPreds$Attrition))
+confusionMatrix(table(dfVal$Attrition, dfPreds))
+```
 
+```
+## Confusion Matrix and Statistics
+## 
+##      dfPreds
+##        No Yes
+##   No  237  14
+##   Yes  45   4
+##                                           
+##                Accuracy : 0.8033          
+##                  95% CI : (0.7538, 0.8468)
+##     No Information Rate : 0.94            
+##     P-Value [Acc > NIR] : 1               
+##                                           
+##                   Kappa : 0.0347          
+##  Mcnemar's Test P-Value : 9.397e-05       
+##                                           
+##             Sensitivity : 0.84043         
+##             Specificity : 0.22222         
+##          Pos Pred Value : 0.94422         
+##          Neg Pred Value : 0.08163         
+##              Prevalence : 0.94000         
+##          Detection Rate : 0.79000         
+##    Detection Prevalence : 0.83667         
+##       Balanced Accuracy : 0.53132         
+##                                           
+##        'Positive' Class : No              
+## 
+```
+
+```r
 # Write predictions to csv file
 #write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
