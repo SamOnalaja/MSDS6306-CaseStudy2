@@ -1153,7 +1153,7 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 dfVal <- read.csv("CaseStudy2Validation.csv")
 
 # Identify variables used to make predictions, based on avg dist metric
-pred_vars <- c("OverTime", "JobRole", "JobInvolvement", "JobLevel", "MaritalStatus")
+pred_vars <- c("OverTime", "JobRole", "JobInvolvement", "JobLevel", "MaritalStatus","WorkLifeBalance")
 
 # Convert wanted factors into integers
 dfTrain$OverTime <- as.integer(dfTrain$OverTime)
@@ -1164,78 +1164,82 @@ dfVal$JobRole <- as.integer(dfVal$JobRole)
 dfVal$MaritalStatus <- as.integer(dfVal$MaritalStatus)
 
 # Generate attrition predictions based on training data
-dfPreds3 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=3)
-dfPreds5 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=5)
+dfVal$dfPreds3 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], 
+                             dfTrain$Attrition, k=3)
+dfVal$dfPreds5 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], 
+                             dfTrain$Attrition, k=5)
 
 # Get accuracy of predictions
-confusionMatrix(table(dfVal$Attrition, dfPreds3))
+confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ```
 
 ```
 ## Confusion Matrix and Statistics
 ## 
-##      dfPreds3
+##      
 ##        No Yes
 ##   No  246   5
-##   Yes  40   9
+##   Yes  39  10
+##                                           
+##                Accuracy : 0.8533          
+##                  95% CI : (0.8082, 0.8914)
+##     No Information Rate : 0.95            
+##     P-Value [Acc > NIR] : 1               
+##                                           
+##                   Kappa : 0.2555          
+##  Mcnemar's Test P-Value : 6.527e-07       
+##                                           
+##             Sensitivity : 0.8632          
+##             Specificity : 0.6667          
+##          Pos Pred Value : 0.9801          
+##          Neg Pred Value : 0.2041          
+##              Prevalence : 0.9500          
+##          Detection Rate : 0.8200          
+##    Detection Prevalence : 0.8367          
+##       Balanced Accuracy : 0.7649          
+##                                           
+##        'Positive' Class : No              
+## 
+```
+
+```r
+confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##      
+##        No Yes
+##   No  247   4
+##   Yes  41   8
 ##                                           
 ##                Accuracy : 0.85            
 ##                  95% CI : (0.8045, 0.8884)
-##     No Information Rate : 0.9533          
+##     No Information Rate : 0.96            
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2298          
-##  Mcnemar's Test P-Value : 4.011e-07       
+##                   Kappa : 0.2116          
+##  Mcnemar's Test P-Value : 8.025e-08       
 ##                                           
-##             Sensitivity : 0.8601          
-##             Specificity : 0.6429          
-##          Pos Pred Value : 0.9801          
-##          Neg Pred Value : 0.1837          
-##              Prevalence : 0.9533          
-##          Detection Rate : 0.8200          
-##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7515          
-##                                           
-##        'Positive' Class : No              
-## 
-```
-
-```r
-confusionMatrix(table(dfVal$Attrition, dfPreds5))
-```
-
-```
-## Confusion Matrix and Statistics
-## 
-##      dfPreds5
-##        No Yes
-##   No  245   6
-##   Yes  41   8
-##                                           
-##                Accuracy : 0.8433          
-##                  95% CI : (0.7972, 0.8826)
-##     No Information Rate : 0.9533          
-##     P-Value [Acc > NIR] : 1               
-##                                           
-##                   Kappa : 0.1956          
-##  Mcnemar's Test P-Value : 7.071e-07       
-##                                           
-##             Sensitivity : 0.8566          
-##             Specificity : 0.5714          
-##          Pos Pred Value : 0.9761          
+##             Sensitivity : 0.8576          
+##             Specificity : 0.6667          
+##          Pos Pred Value : 0.9841          
 ##          Neg Pred Value : 0.1633          
-##              Prevalence : 0.9533          
-##          Detection Rate : 0.8167          
+##              Prevalence : 0.9600          
+##          Detection Rate : 0.8233          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7140          
+##       Balanced Accuracy : 0.7622          
 ##                                           
 ##        'Positive' Class : No              
 ## 
 ```
 
 ```r
+dfPreds <- select(dfVal, ID, dfPreds3)
+
 # Write predictions to csv file
-#write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
+write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
 ### Employee Trends
@@ -1268,9 +1272,21 @@ print(Jobs)
 ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Average Job Satisfaction by Job") + xlab("Job Type") + ylab("Average Satisfaction") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/jobrole_jobsat-1.png)<!-- -->
+<img src="CaseStudy2_files/figure-html/jobrole_jobsat-1.png" style="display: block; margin: auto;" />
+
+```r
+ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  coord_flip() + 
+  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Job Satisfaction") +
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+<img src="CaseStudy2_files/figure-html/jobrole_jobsat-2.png" style="display: block; margin: auto;" />
 
 The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
+
 
 
 ```r
@@ -1300,6 +1316,23 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + geom_bar(stat='identity', 
 ```
 
 ![](CaseStudy2_files/figure-html/income_jobsat-3.png)<!-- -->
+
+```r
+ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) + 
+  geom_point(pch = 21, size = 2, color="green") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+![](CaseStudy2_files/figure-html/income_jobsat-4.png)<!-- -->
+
+```r
+ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome, group=JobSatisfaction)) +
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="lightgreen") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+![](CaseStudy2_files/figure-html/income_jobsat-5.png)<!-- -->
 
 
 
