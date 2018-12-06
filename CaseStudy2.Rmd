@@ -73,12 +73,18 @@ dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf,
 # TODO make tables look nicer 
 
 # Make relative frequency tables for categorical variables
+AbsDiff <- data.frame(Variable=character(), AvgDistance=numeric())
 for (var in variables) {
   print(var)
   freqtable <- table(dfTrain[[var]], dfTrain$Attrition)
   count <- plyr::count(dfTrain[[var]])
-  print(freqtable / count$freq)
+  RelFreq <- freqtable / count$freq
+  print(RelFreq)
+  Sum <- sum(abs(RelFreq[,2]-0.1606838))/nrow(RelFreq)
+  print(Sum)
+  AbsDiff <- rbind(AbsDiff, data.frame(Variable=var, AverageDistance=Sum))
 }
+print(AbsDiff)
 ```
 
 We can also examine other quantitative variables that we suspect to have an impact on attrition. 
