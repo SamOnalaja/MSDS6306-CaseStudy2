@@ -32,9 +32,6 @@ The purpose of this analysis is to explore what variables are most associated wi
 ```{r}
 # Read in training data
 dfTrain <- read.csv("CaseStudy2-data.csv")
-
-# Break numeric vars in categories
-
 ```
 
 If a variable did not have a significant impact on turnover, we would expect that the attrition percentage within a group is the same as the attrition percentage in the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative percentages for turnover for each categorical variable, those groups with high attrition percentages appear to have a strong impact on turnover. 
@@ -45,7 +42,7 @@ TODO Explanation of our varaible selection and which ones we left out.
 # Percentage of retained/lost employees
 kable(table(dfTrain$Attrition) / nrow(dfTrain), 
       col.names=c("Attrition", "Percent")) %>% 
-      kable_styling(full_width=F)
+      kable_styling(full_width=FALSE)
 
 # Define variables for analysis
 variables <- c("BusinessTravel", "Department", "Education", 
@@ -76,9 +73,11 @@ dfTrain$YearsAtCompany <- cut(dfTrain$YearsAtCompany, breaks=c(-Inf, 5, 15, 25, 
 dfTrain$YearsInCurrentRole <- cut(dfTrain$YearsInCurrentRole, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
 dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c(-Inf, 2, 7, Inf), labels=c(1, 2, 3))
 dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
+```
 
-# TODO make tables look nicer 
+TODO discuss metric
 
+```{r results="asis"}
 # Make relative frequency tables for categorical variables
 AbsDiff <- data.frame(Variable=character(), AvgDistance=numeric())
 for (var in variables) {
@@ -86,32 +85,14 @@ for (var in variables) {
   freqtable <- table(dfTrain[[var]], dfTrain$Attrition)
   count <- plyr::count(dfTrain[[var]])
   RelFreq <- freqtable / count$freq
-  print(RelFreq)
+  print(kable(RelFreq,row.names=TRUE) %>% kable_styling(full_width=FALSE))
   Sum <- sum(abs(RelFreq[,2]-0.1606838))/nrow(RelFreq)
-  print(Sum)
   AbsDiff <- rbind(AbsDiff, data.frame(Variable=var, AverageDistance=Sum))
 }
-print(AbsDiff)
+# Get average distance metric for all variables
+AbsDiff <- AbsDiff[order(-AbsDiff$AverageDistance),]
+kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 ```
-
-### Employee Trends
-
-```{r}
-# Job satisfaction by group
-Jobs <- group_by(dfTrain, JobRole) %>% summarise(Avg=mean(JobSatisfaction, na.rm=TRUE))
-print(Jobs)
-ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
-```
-
-We wanted to see how various factors would effect job satisfaction. The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
-
-```{r}
-ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) + 
-  geom_point(pch = 21, size = 2, color="green") +
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
-Income does not appear to have an effect on job satisfaction, as every level of satisfaction has a similar distribution of income.
 
 ### KNN Classification
 
@@ -119,25 +100,61 @@ Income does not appear to have an effect on job satisfaction, as every level of 
 # Read in validation data
 dfVal <- read.csv("CaseStudy2Validation.csv")
 
-# I selected Business Travel, JobInvolvement, JobLevel, JobRole, and MAritalStatus because they looked the most different from the attrition percentages of the group as a whole. We can come up with a better justification later?
+# Identify variables used to make predictions, based on avg dist metric
+pred_vars <- c("OverTime", "JobRole", "JobInvolvement", "JobLevel", "MaritalStatus")
 
-# Convert wanted factors into integers.
-dfTrain$BusinessTravel <- as.integer(dfTrain$BusinessTravel)
+# Convert wanted factors into integers
+dfTrain$OverTime <- as.integer(dfTrain$OverTime)
 dfTrain$JobRole <- as.integer(dfTrain$JobRole)
 dfTrain$MaritalStatus <- as.integer(dfTrain$MaritalStatus)
-dfVal$MaritalStatus <- as.integer(dfVal$MaritalStatus)
+dfVal$OverTime <- as.integer(dfVal$OverTime)
 dfVal$JobRole <- as.integer(dfVal$JobRole)
-dfVal$BusinessTravel <- as.integer(dfVal$BusinessTravel)
+dfVal$MaritalStatus <- as.integer(dfVal$MaritalStatus)
 
 # Generate attrition predictions based on training data
-dfPreds <- class::knn(dfTrain[,c(15,16,17,19,24)], dfVal[,c(15,16,17,19,24)], dfTrain$Attrition, k=4)
+dfPreds3 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=3)
+dfPreds5 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=5)
 
 # Get accuracy of predictions
-confusionMatrix(table(dfVal$Attrition, dfPreds))
+confusionMatrix(table(dfVal$Attrition, dfPreds3))
+confusionMatrix(table(dfVal$Attrition, dfPreds5))
 
 # Write predictions to csv file
 #write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
+
+### Employee Trends
+
+```{r jobrole_jobsat}
+# Re-load original data
+dfTrain <- read.csv("CaseStudy2-data.csv")
+# Job satisfaction by group
+Jobs <- group_by(dfTrain, JobRole) %>% summarise(Avg=mean(JobSatisfaction, na.rm=TRUE))
+print(Jobs)
+ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Average Job Satisfaction by Job") + xlab("Job Type") + ylab("Average Satisfaction") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
+
+```{r income_jobsat}
+# Scatterplot of Monthly Income by Job Role
+ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome)) + ggtitle("Income Distribution by Job Type") + xlab("Job Type") + ylab("Monthly Income") + 
+  geom_point(pch = 21, size = 3, color="blue") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+# Scatterplot of Age by Job Role
+ggplot(dfTrain, aes(x=JobRole, y=Age)) + ggtitle("Age Distribution by Job Type") + xlab("Job Type") + ylab("Age") + 
+  geom_point(pch = 21, size = 3, color="red") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+# Attrition rate by Job Role
+freqtable <- table(dfTrain$JobRole, dfTrain$Attrition)
+count <- plyr::count(dfTrain$JobRole)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[10:18,]
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Attrition Rate per Job Type") + ylab("Attrition Rate") + xlab("Job Type") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+
 
 # Conclusion
 
