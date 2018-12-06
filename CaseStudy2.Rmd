@@ -33,15 +33,13 @@ The purpose of this analysis is to explore what variables are most associated wi
 # Read in training data
 dfTrain <- read.csv("CaseStudy2-data.csv")
 
-# Separate retained/lost employees for EDA
-emp_kept <- subset(dfTrain, Attrition=="No")
-emp_lost <- subset(dfTrain, Attrition=="Yes")
+# Break numeric vars in categories
 
-# TODO maybe make categories for numeric vars like age, income, etc
 ```
 
 If a variable did not have a significant impact on turnover, we would expect that the attrition percentage within a group is the same as the attrition percentage in the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative percentages for turnover for each categorical variable, those groups with high attrition percentages appear to have a strong impact on turnover. 
-Explanation of our varaible selection and which ones we left out.
+
+TODO Explanation of our varaible selection and which ones we left out.
 
 ```{r}
 # Percentage of retained/lost employees
@@ -56,12 +54,21 @@ variables <- c("BusinessTravel", "Department", "Education",
               "JobRole", "JobSatisfaction", "MaritalStatus",
               "OverTime", "PerformanceRating", 
               "RelationshipSatisfaction", "StockOptionLevel", 
-              "WorkLifeBalance", "Age", "DailyRate", "DistanceFromHome", "HourlyRate",
-              "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked", "PercentSalaryHike",
-              "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany",
-              "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager")
+              "WorkLifeBalance", "Age", "DailyRate", "DistanceFromHome", 
+              "HourlyRate", "MonthlyIncome", "MonthlyRate", 
+              "NumCompaniesWorked", "PercentSalaryHike",
+              "TotalWorkingYears", "TrainingTimesLastYear", 
+              "YearsAtCompany", "YearsInCurrentRole", 
+              "YearsSinceLastPromotion", "YearsWithCurrManager")
 
 # Turn numerical values into categorical
+dfTrain$Age <- cut(dfTrain$Age, breaks=c(-Inf,30,40,50,Inf),labels=c(1,2,3,4))
+dfTrain$DailyRate <- cut(dfTrain$DailyRate, breaks=c(-Inf,500,1000,Inf),labels=c(1,2,3))
+dfTrain$DistanceFromHome <- cut(dfTrain$DistanceFromHome, breaks=c(-Inf,10,Inf),labels=c(1,2))
+dfTrain$HourlyRate <- cut(dfTrain$HourlyRate, breaks=c(-Inf,65,Inf),labels=c(1,2))
+dfTrain$MonthlyIncome <- cut(dfTrain$MonthlyIncome, breaks=c(-Inf,5000,10000,15000,Inf),labels=c(1,2,3,4))
+dfTrain$MonthlyRate <- cut(dfTrain$MonthlyRate, breaks=c(-Inf,5000,10000,15000,20000,Inf),labels=c(1,2,3,4,5))
+dfTrain$NumCompaniesWorked <- cut(dfTrain$NumCompaniesWorked, breaks=c(-Inf,4,Inf),labels=c(1,2))
 dfTrain$PercentSalaryHike <- cut(dfTrain$PercentSalaryHike, breaks=c(-Inf, 13, 17, Inf), labels=c(1, 2, 3))
 dfTrain$TotalWorkingYears <- cut(dfTrain$TotalWorkingYears, breaks=c(-Inf, 10, 20, Inf), labels=c(1, 2, 3))
 dfTrain$TrainingTimesLastYear <- cut(dfTrain$TrainingTimesLastYear, breaks=c(-Inf, 1, 4, Inf), labels=c(1, 2, 3))
@@ -87,25 +94,6 @@ for (var in variables) {
 print(AbsDiff)
 ```
 
-We can also examine other quantitative variables that we suspect to have an impact on attrition. 
-
-```{r}
-# TODO look at other variables
-ggplot(data=dfTrain, aes(x=Age)) +
-  geom_histogram(aes(fill=Attrition)) +
-  facet_wrap(~Attrition, ncol=1)
-
-# Significant difference in means for age
-t.test(Age ~ Attrition, data=dfTrain, var.equal=T, alternative='two.sided')
-
-ggplot(data=dfTrain, aes(x=HourlyRate)) +
-  geom_histogram(aes(fill=Attrition)) +
-  facet_wrap(~Attrition, ncol=1) 
-
-# Insignificant difference in means for hourly rate
-t.test(HourlyRate ~ Attrition, data=dfTrain, var.equal=T, alternative='two.sided')
-```
-
 ### Employee Trends
 
 ```{r}
@@ -124,7 +112,6 @@ ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) +
 ```
 
 Income does not appear to have an effect on job satisfaction, as every level of satisfaction has a similar distribution of income.
-
 
 ### KNN Classification
 
