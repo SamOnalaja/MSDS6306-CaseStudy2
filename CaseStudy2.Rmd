@@ -14,6 +14,7 @@ library(dplyr)
 library(knitr)
 library(dplyr)
 library(caret)
+library(kableExtra)
 ```
 
 # Summary
@@ -22,8 +23,7 @@ TODO
 
 # Introduction
 
-The purpose of this analysis is to explore what variables are most associated with attrition levels in Fotune 1000 companies. Exploratory analytics will be used to determine these variables as well as other general trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
-TODO (Kristen)
+The purpose of this analysis is to explore what variables are most associated with attrition levels in Fortune 1000 companies. Exploratory analytics will be used to determine these variables as well as other general trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
 
 # Analysis
 
@@ -33,6 +33,10 @@ TODO (Kristen)
 # Read in training data
 dfTrain <- read.csv("CaseStudy2-data.csv")
 
+# Separate retained/lost employees for EDA
+emp_kept <- subset(dfTrain, Attrition=="No")
+emp_lost <- subset(dfTrain, Attrition=="Yes")
+
 # TODO maybe make categories for numeric vars like age, income, etc
 ```
 
@@ -41,8 +45,9 @@ Explanation of our varaible selection and which ones we left out.
 
 ```{r}
 # Percentage of retained/lost employees
-kable(table(dfTrain$Attrition) / nrow(dfTrain))
-table(dfTrain$Attrition) / nrow(dfTrain)
+kable(table(dfTrain$Attrition) / nrow(dfTrain), 
+      col.names=c("Attrition", "Percent")) %>% 
+      kable_styling(full_width=F)
 
 # Define variables for analysis
 variables <- c("BusinessTravel", "Department", "Education", 
@@ -64,6 +69,7 @@ dfTrain$YearsAtCompany <- cut(dfTrain$YearsAtCompany, breaks=c(-Inf, 5, 15, 25, 
 dfTrain$YearsInCurrentRole <- cut(dfTrain$YearsInCurrentRole, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
 dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c(-Inf, 2, 7, Inf), labels=c(1, 2, 3))
 dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
+
 # TODO make tables look nicer 
 
 # Make relative frequency tables for categorical variables
@@ -75,9 +81,23 @@ for (var in variables) {
 }
 ```
 
+We can also examine other quantitative variables that we suspect to have an impact on attrition. 
+
 ```{r}
 # TODO look at other variables
+ggplot(data=dfTrain, aes(x=Age)) +
+  geom_histogram(aes(fill=Attrition)) +
+  facet_wrap(~Attrition, ncol=1)
 
+# Significant difference in means for age
+t.test(Age ~ Attrition, data=dfTrain, var.equal=T, alternative='two.sided')
+
+ggplot(data=dfTrain, aes(x=HourlyRate)) +
+  geom_histogram(aes(fill=Attrition)) +
+  facet_wrap(~Attrition, ncol=1) 
+
+# Insignificant difference in means for hourly rate
+t.test(HourlyRate ~ Attrition, data=dfTrain, var.equal=T, alternative='two.sided')
 ```
 
 ### Employee Trends
@@ -89,7 +109,7 @@ print(Jobs)
 ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
-We wanted to see how various factors would effect job satisfaction. The average job satisfaction for each posistion is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
+We wanted to see how various factors would effect job satisfaction. The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
 
 ```{r}
 ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) + 
@@ -106,7 +126,7 @@ Income does not appear to have an effect on job satisfaction, as every level of 
 # Read in validation data
 dfVal <- read.csv("CaseStudy2Validation.csv")
 
-# I selected Business Travel, JobInvolvement, JobLevel, JobRole, and MAritalStatus because they looked the most different from the attrition percentages of the group as a whole. We can come up with a better justificcation later?
+# I selected Business Travel, JobInvolvement, JobLevel, JobRole, and MAritalStatus because they looked the most different from the attrition percentages of the group as a whole. We can come up with a better justification later?
 
 # Convert wanted factors into integers.
 dfTrain$BusinessTravel <- as.integer(dfTrain$BusinessTravel)
