@@ -1153,7 +1153,7 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 dfVal <- read.csv("CaseStudy2Validation.csv")
 
 # Identify variables used to make predictions, based on avg dist metric
-pred_vars <- c("OverTime", "JobRole", "JobInvolvement", "JobLevel", "MaritalStatus")
+pred_vars <- c("OverTime", "JobRole", "JobInvolvement", "JobLevel", "MaritalStatus","WorkLifeBalance")
 
 # Convert wanted factors into integers
 dfTrain$OverTime <- as.integer(dfTrain$OverTime)
@@ -1164,78 +1164,82 @@ dfVal$JobRole <- as.integer(dfVal$JobRole)
 dfVal$MaritalStatus <- as.integer(dfVal$MaritalStatus)
 
 # Generate attrition predictions based on training data
-dfPreds3 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=3)
-dfPreds5 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=5)
+dfVal$dfPreds3 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], 
+                             dfTrain$Attrition, k=3)
+dfVal$dfPreds5 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], 
+                             dfTrain$Attrition, k=5)
 
 # Get accuracy of predictions
-confusionMatrix(table(dfVal$Attrition, dfPreds3))
+confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ```
 
 ```
 ## Confusion Matrix and Statistics
 ## 
-##      dfPreds3
+##      
 ##        No Yes
 ##   No  245   6
-##   Yes  40   9
+##   Yes  38  11
 ##                                           
-##                Accuracy : 0.8467          
-##                  95% CI : (0.8008, 0.8855)
-##     No Information Rate : 0.95            
+##                Accuracy : 0.8533          
+##                  95% CI : (0.8082, 0.8914)
+##     No Information Rate : 0.9433          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2217          
-##  Mcnemar's Test P-Value : 1.141e-06       
+##                   Kappa : 0.2721          
+##  Mcnemar's Test P-Value : 2.962e-06       
 ##                                           
-##             Sensitivity : 0.8596          
-##             Specificity : 0.6000          
+##             Sensitivity : 0.8657          
+##             Specificity : 0.6471          
 ##          Pos Pred Value : 0.9761          
-##          Neg Pred Value : 0.1837          
-##              Prevalence : 0.9500          
+##          Neg Pred Value : 0.2245          
+##              Prevalence : 0.9433          
 ##          Detection Rate : 0.8167          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7298          
+##       Balanced Accuracy : 0.7564          
 ##                                           
 ##        'Positive' Class : No              
 ## 
 ```
 
 ```r
-confusionMatrix(table(dfVal$Attrition, dfPreds5))
+confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 ```
 
 ```
 ## Confusion Matrix and Statistics
 ## 
-##      dfPreds5
+##      
 ##        No Yes
-##   No  246   5
-##   Yes  41   8
+##   No  248   3
+##   Yes  40   9
 ##                                           
-##                Accuracy : 0.8467          
-##                  95% CI : (0.8008, 0.8855)
-##     No Information Rate : 0.9567          
+##                Accuracy : 0.8567          
+##                  95% CI : (0.8118, 0.8943)
+##     No Information Rate : 0.96            
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2035          
-##  Mcnemar's Test P-Value : 2.463e-07       
+##                   Kappa : 0.2467          
+##  Mcnemar's Test P-Value : 4.021e-08       
 ##                                           
-##             Sensitivity : 0.8571          
-##             Specificity : 0.6154          
-##          Pos Pred Value : 0.9801          
-##          Neg Pred Value : 0.1633          
-##              Prevalence : 0.9567          
-##          Detection Rate : 0.8200          
+##             Sensitivity : 0.8611          
+##             Specificity : 0.7500          
+##          Pos Pred Value : 0.9880          
+##          Neg Pred Value : 0.1837          
+##              Prevalence : 0.9600          
+##          Detection Rate : 0.8267          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7363          
+##       Balanced Accuracy : 0.8056          
 ##                                           
 ##        'Positive' Class : No              
 ## 
 ```
 
 ```r
+dfPreds <- select(dfVal, ID, dfPreds3)
+
 # Write predictions to csv file
-#write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
+write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
 ### Employee Trends
@@ -1265,10 +1269,15 @@ print(Jobs)
 ```
 
 ```r
-ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
+ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  coord_flip() + 
+  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Job Satisfaction") +
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/jobrole_jobsat-1.png)<!-- -->
+<img src="CaseStudy2_files/figure-html/jobrole_jobsat-1.png" style="display: block; margin: auto;" />
 
 We wanted to see how various factors would effect job satisfaction. The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
 
@@ -1279,7 +1288,16 @@ ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/income_jobsat-1.png)<!-- -->
+<img src="CaseStudy2_files/figure-html/income_jobsat-1.png" style="display: block; margin: auto;" />
+
+```r
+ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome, group=JobSatisfaction)) +
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="lightgreen") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+<img src="CaseStudy2_files/figure-html/income_jobsat-2.png" style="display: block; margin: auto;" />
 
 Income does not appear to have an effect on job satisfaction, as every level of satisfaction has a similar distribution of income.
 
