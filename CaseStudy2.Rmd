@@ -121,19 +121,24 @@ dfVal <- read.csv("CaseStudy2Validation.csv")
 
 # I selected Business Travel, JobInvolvement, JobLevel, JobRole, and MAritalStatus because they looked the most different from the attrition percentages of the group as a whole. We can come up with a better justification later?
 
-# Convert wanted factors into integers.
-dfTrain$BusinessTravel <- as.integer(dfTrain$BusinessTravel)
+# Convert wanted factors into integers
+dfTrain$OverTime <- as.integer(dfTrain$OverTime)
 dfTrain$JobRole <- as.integer(dfTrain$JobRole)
 dfTrain$MaritalStatus <- as.integer(dfTrain$MaritalStatus)
 dfVal$MaritalStatus <- as.integer(dfVal$MaritalStatus)
 dfVal$JobRole <- as.integer(dfVal$JobRole)
-dfVal$BusinessTravel <- as.integer(dfVal$BusinessTravel)
+dfVal$OverTime <- as.integer(dfVal$OverTime)
+
+# Identify variables used to make predictions
+pred_vars <- c("OverTime", "JobRole", "JobInvolvement", "JobLevel", "MaritalStatus")
 
 # Generate attrition predictions based on training data
-dfPreds <- class::knn(dfTrain[,c(4,15,16,17,21)], dfVal[,c(4,15,16,17,21)], dfTrain$Attrition, k=5)
+dfPreds3 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=3)
+dfPreds5 <- class::knn(dfTrain[,pred_vars], dfVal[,pred_vars], dfTrain$Attrition, k=5)
 
 # Get accuracy of predictions
-confusionMatrix(table(dfVal$Attrition, dfPreds))
+confusionMatrix(table(dfVal$Attrition, dfPreds3))
+confusionMatrix(table(dfVal$Attrition, dfPreds5))
 
 # Write predictions to csv file
 #write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
