@@ -31,6 +31,7 @@ dfTrain <- read.csv("CaseStudy2-data.csv")
 ```
 
 If a variable did not have a significant impact on turnover, we would expect that the attrition percentage within a group is the same as the attrition percentage in the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative percentages for turnover for each categorical variable, those groups with high attrition percentages appear to have a strong impact on turnover. 
+Explanation of our varaible selection and which ones we left out.
 
 
 ```r
@@ -61,13 +62,21 @@ cat_vars <- c("BusinessTravel", "Department", "Education",
               "EducationField", "EnvironmentSatisfaction",
               "Gender", "JobInvolvement", "JobLevel",
               "JobRole", "JobSatisfaction", "MaritalStatus",
-              "Over18", "OverTime", "PerformanceRating", 
+              "OverTime", "PerformanceRating", 
               "RelationshipSatisfaction", "StockOptionLevel", 
               "WorkLifeBalance")
 
 # Define numerical variables
-num_vars <- c("Age", "DailyRate", "DistanceFromHome", "Education", "EnvironmentSatisfaction", "HourlyRate", "JobInvolvement", "JobLevel", "JobSatisfaction", "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked", "PercentSalaryHike", "PerformanceRating", "RelationshipSatisfaction", "StandardHours", "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager", "Rand")
+num_vars <- c("Age", "DailyRate", "DistanceFromHome", "HourlyRate", "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked", "PercentSalaryHike", "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager")
 
+# Turn numerical values into categorical
+dfTrain$PercentSalaryHike <- cut(dfTrain$PercentSalaryHike, breaks=c(-Inf, 13, 17, Inf), labels=c(1, 2, 3))
+dfTrain$TotalWorkingYears <- cut(dfTrain$TotalWorkingYears, breaks=c(-Inf, 10, 20, Inf), labels=c(1, 2, 3))
+dfTrain$TrainingTimesLastYear <- cut(dfTrain$TrainingTimesLastYear, breaks=c(-Inf, 1, 4, Inf), labels=c(1, 2, 3))
+dfTrain$YearsAtCompany <- cut(dfTrain$YearsAtCompany, breaks=c(-Inf, 5, 15, 25, Inf), labels=c(1, 2, 3, 4))
+dfTrain$YearsInCurrentRole <- cut(dfTrain$YearsInCurrentRole, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
+dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c(-Inf, 2, 7, Inf), labels=c(1, 2, 3))
+dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
 # TODO make tables look nicer ## I was trying to use kable like above to make these look nice but it wasn't working. When I put it on the table function it errors out when you divide it by cout$freq
 
 # Make relative frequency tables for categorical variables
@@ -161,10 +170,6 @@ for (var in cat_vars) {
 ##   Divorced 0.92045455 0.07954545
 ##   Married  0.86629002 0.13370998
 ##   Single   0.74400000 0.25600000
-## [1] "Over18"
-##    
-##            No       Yes
-##   Y 0.8393162 0.1606838
 ## [1] "OverTime"
 ##      
 ##              No       Yes
@@ -265,7 +270,7 @@ dfVal$JobRole <- as.integer(dfVal$JobRole)
 dfVal$BusinessTravel <- as.integer(dfVal$BusinessTravel)
 
 # Generate attrition predictions based on training data
-dfPreds <- class::knn(dfTrain[,c(4,15,16,17,21)], dfVal[,c(4,15,16,17,21)], dfTrain$Attrition, k=3)
+dfPreds <- class::knn(dfTrain[,c(4,15,16,17,21)], dfVal[,c(4,15,16,17,21)], dfTrain$Attrition, k=5)
 
 # Get accuracy of predictions
 confusionMatrix(table(dfVal$Attrition, dfPreds))
@@ -276,25 +281,25 @@ confusionMatrix(table(dfVal$Attrition, dfPreds))
 ## 
 ##      dfPreds
 ##        No Yes
-##   No  237  14
-##   Yes  45   4
+##   No  247   4
+##   Yes  47   2
 ##                                           
-##                Accuracy : 0.8033          
-##                  95% CI : (0.7538, 0.8468)
-##     No Information Rate : 0.94            
+##                Accuracy : 0.83            
+##                  95% CI : (0.7826, 0.8707)
+##     No Information Rate : 0.98            
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.0347          
-##  Mcnemar's Test P-Value : 9.397e-05       
+##                   Kappa : 0.0385          
+##  Mcnemar's Test P-Value : 4.074e-09       
 ##                                           
-##             Sensitivity : 0.84043         
-##             Specificity : 0.22222         
-##          Pos Pred Value : 0.94422         
-##          Neg Pred Value : 0.08163         
-##              Prevalence : 0.94000         
-##          Detection Rate : 0.79000         
+##             Sensitivity : 0.84014         
+##             Specificity : 0.33333         
+##          Pos Pred Value : 0.98406         
+##          Neg Pred Value : 0.04082         
+##              Prevalence : 0.98000         
+##          Detection Rate : 0.82333         
 ##    Detection Prevalence : 0.83667         
-##       Balanced Accuracy : 0.53132         
+##       Balanced Accuracy : 0.58673         
 ##                                           
 ##        'Positive' Class : No              
 ## 

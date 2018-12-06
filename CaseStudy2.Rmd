@@ -37,28 +37,37 @@ dfTrain <- read.csv("CaseStudy2-data.csv")
 ```
 
 If a variable did not have a significant impact on turnover, we would expect that the attrition percentage within a group is the same as the attrition percentage in the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative percentages for turnover for each categorical variable, those groups with high attrition percentages appear to have a strong impact on turnover. 
+Explanation of our varaible selection and which ones we left out.
 
 ```{r}
 # Percentage of retained/lost employees
 kable(table(dfTrain$Attrition) / nrow(dfTrain))
 table(dfTrain$Attrition) / nrow(dfTrain)
 
-# Define categorical variables
-cat_vars <- c("BusinessTravel", "Department", "Education", 
+# Define variables for analysis
+variables <- c("BusinessTravel", "Department", "Education", 
               "EducationField", "EnvironmentSatisfaction",
               "Gender", "JobInvolvement", "JobLevel",
               "JobRole", "JobSatisfaction", "MaritalStatus",
-              "Over18", "OverTime", "PerformanceRating", 
+              "OverTime", "PerformanceRating", 
               "RelationshipSatisfaction", "StockOptionLevel", 
-              "WorkLifeBalance")
+              "WorkLifeBalance", "Age", "DailyRate", "DistanceFromHome", "HourlyRate",
+              "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked", "PercentSalaryHike",
+              "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany",
+              "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager")
 
-# Define numerical variables
-num_vars <- c("Age", "DailyRate", "DistanceFromHome", "Education", "EnvironmentSatisfaction", "HourlyRate", "JobInvolvement", "JobLevel", "JobSatisfaction", "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked", "PercentSalaryHike", "PerformanceRating", "RelationshipSatisfaction", "StandardHours", "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager", "Rand")
-
-# TODO make tables look nicer ## I was trying to use kable like above to make these look nice but it wasn't working. When I put it on the table function it errors out when you divide it by cout$freq
+# Turn numerical values into categorical
+dfTrain$PercentSalaryHike <- cut(dfTrain$PercentSalaryHike, breaks=c(-Inf, 13, 17, Inf), labels=c(1, 2, 3))
+dfTrain$TotalWorkingYears <- cut(dfTrain$TotalWorkingYears, breaks=c(-Inf, 10, 20, Inf), labels=c(1, 2, 3))
+dfTrain$TrainingTimesLastYear <- cut(dfTrain$TrainingTimesLastYear, breaks=c(-Inf, 1, 4, Inf), labels=c(1, 2, 3))
+dfTrain$YearsAtCompany <- cut(dfTrain$YearsAtCompany, breaks=c(-Inf, 5, 15, 25, Inf), labels=c(1, 2, 3, 4))
+dfTrain$YearsInCurrentRole <- cut(dfTrain$YearsInCurrentRole, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
+dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c(-Inf, 2, 7, Inf), labels=c(1, 2, 3))
+dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
+# TODO make tables look nicer 
 
 # Make relative frequency tables for categorical variables
-for (var in cat_vars) {
+for (var in variables) {
   print(var)
   freqtable <- table(dfTrain[[var]], dfTrain$Attrition)
   count <- plyr::count(dfTrain[[var]])
