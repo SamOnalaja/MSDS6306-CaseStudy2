@@ -15,7 +15,7 @@ TODO
 
 # Introduction
 
-The purpose of this analysis is to explore what variables are most associated with attrition levels in Fortune 1000 companies. Exploratory analytics will be used to determine these variables as well as other general trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
+The purpose of this analysis is to explore what variables are good predictors for attrition rates in Fortune 1000 companies. Exploratory analytics will be used to determine which variables are the best predictors of attrition, as well as looking at other trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
 
 # Analysis
 
@@ -27,9 +27,9 @@ The purpose of this analysis is to explore what variables are most associated wi
 dfTrain <- read.csv("CaseStudy2-data.csv")
 ```
 
-If a variable did not have a significant impact on turnover, we would expect that the attrition percentage within a group is the same as the attrition percentage in the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative percentages for turnover for each categorical variable, those groups with high attrition percentages appear to have a strong impact on turnover. 
+If a variable does not have a significant impact on turnover, we would expect that the attrition rate within a group is the same as the attrition rate of the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative rates for turnover for each categorical variable, we would expect variables with high attrition rates to be strong predictors of turnover. 
 
-TODO Explanation of our varaible selection and which ones we left out.
+We excluded a few variables from consideration at the start because they had the same value for every employee and wouldn't be any use as predictors. Then, we took all of the numerical values and broke them up into different levels based on ranges that we chose.
 
 
 ```r
@@ -90,7 +90,7 @@ dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c
 dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
 ```
 
-TODO discuss metric
+The tables generated below are the attrition rate for each level within every variable.
 
 
 ```r
@@ -1008,6 +1008,9 @@ for (var in variables) {
 </tbody>
 </table>
 
+In order to figure out which variables had attrition rates that were the most different from the attirtion rate of the data set as a whole, we had to create a metric. The metric that we used was the average absolute difference in attrition rates. We took the attrition rates under a variable and found the average difference between them and the total attrition rate. The varaibles with the higest average difference are listed in the table below.
+
+
 ```r
 # Get average distance metric for all variables
 AbsDiff <- AbsDiff[order(-AbsDiff$AverageDistance),]
@@ -1147,6 +1150,8 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 
 ### KNN Classification
 
+We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. We used the top 5 variables in the above table as our predictors in the model. We ran the model looking at the three closest points and the five closest points to see which gave better results.
+
 
 ```r
 # Read in validation data
@@ -1178,25 +1183,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ## 
 ##      
 ##        No Yes
-##   No  246   5
+##   No  247   4
 ##   Yes  39  10
 ##                                           
-##                Accuracy : 0.8533          
-##                  95% CI : (0.8082, 0.8914)
-##     No Information Rate : 0.95            
+##                Accuracy : 0.8567          
+##                  95% CI : (0.8118, 0.8943)
+##     No Information Rate : 0.9533          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2555          
-##  Mcnemar's Test P-Value : 6.527e-07       
+##                   Kappa : 0.264           
+##  Mcnemar's Test P-Value : 2.161e-07       
 ##                                           
-##             Sensitivity : 0.8632          
-##             Specificity : 0.6667          
-##          Pos Pred Value : 0.9801          
+##             Sensitivity : 0.8636          
+##             Specificity : 0.7143          
+##          Pos Pred Value : 0.9841          
 ##          Neg Pred Value : 0.2041          
-##              Prevalence : 0.9500          
-##          Detection Rate : 0.8200          
+##              Prevalence : 0.9533          
+##          Detection Rate : 0.8233          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7649          
+##       Balanced Accuracy : 0.7890          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1211,25 +1216,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 ## 
 ##      
 ##        No Yes
-##   No  247   4
+##   No  248   3
 ##   Yes  41   8
 ##                                           
-##                Accuracy : 0.85            
-##                  95% CI : (0.8045, 0.8884)
-##     No Information Rate : 0.96            
+##                Accuracy : 0.8533          
+##                  95% CI : (0.8082, 0.8914)
+##     No Information Rate : 0.9633          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2116          
-##  Mcnemar's Test P-Value : 8.025e-08       
+##                   Kappa : 0.22            
+##  Mcnemar's Test P-Value : 2.434e-08       
 ##                                           
-##             Sensitivity : 0.8576          
-##             Specificity : 0.6667          
-##          Pos Pred Value : 0.9841          
+##             Sensitivity : 0.8581          
+##             Specificity : 0.7273          
+##          Pos Pred Value : 0.9880          
 ##          Neg Pred Value : 0.1633          
-##              Prevalence : 0.9600          
-##          Detection Rate : 0.8233          
+##              Prevalence : 0.9633          
+##          Detection Rate : 0.8267          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7622          
+##       Balanced Accuracy : 0.7927          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1239,7 +1244,7 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 dfPreds <- select(dfVal, ID, dfPreds3)
 
 # Write predictions to csv file
-write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
+# write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
 ### Employee Trends
