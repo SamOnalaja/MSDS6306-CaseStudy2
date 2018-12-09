@@ -25,7 +25,7 @@ dfTrain <- read.csv("CaseStudy2-data.csv")
 
 If a variable does not have a significant impact on turnover, we would expect that the attrition rate within a group is the same as the attrition rate of the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative rates for turnover for each categorical variable, we would expect variables with high attrition rates to be strong predictors of turnover. 
 
-We excluded a few variables from consideration at the start because they had the same value for every employee and wouldn't be any use as predictors. Then, we took all of the numerical values and broke them up into different levels based on ranges that we chose.
+Note that we excluded a few variables from consideration at the start because they had the same value for every employee, and thus they wouldn't be any use as predictors. Then, we took all of the quantitative values and broke them up into different levels based on ranges of similar sizes.
 
 
 ```r
@@ -100,7 +100,7 @@ dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf,
                                     labels=c("0-5", "6-10", ">10"))
 ```
 
-The tables generated below are the attrition rate for each level within every variable.
+The tables generated below are the attrition rates for each level within every variable.
 
 
 ```r
@@ -992,7 +992,7 @@ for (var in variables) {
 </tbody>
 </table>
 
-In order to figure out which variables had attrition rates that were the most different from the attirtion rate of the data set as a whole, we had to create a metric. The metric that we used was the average absolute difference in attrition rates. We took the attrition rates under a variable and found the average difference between them and the total attrition rate. The varaibles with the higest average difference are listed in the table below.
+In order to figure out which variables had attrition rates that were the most different from the attrition rate of the data set as a whole, we had to create a metric. The metric that we used was the average absolute difference in attrition rates. We took the attrition rates under a variable and found the average difference between them and the total attrition rate. The variables and their average differences are listed in the table below, with the highest metrics and thus most influential variables appearing first.
 
 
 ```r
@@ -1134,7 +1134,7 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 
 ### KNN Classification
 
-We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. First, we used the top 5 variables in the above table as our predictors in the model. Adding the 6th variable didn't improve the accuracy, but adding the 7th did. Our model below is using varaibles 1-5 and 7 as predictors. We ran the model looking at the three closest points and the five closest points to see which gave better results.
+We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. First, we used the top 5 variables in the above table as our predictors in the model. Adding the 6th variable didn't improve the accuracy, but adding the 7th did. Our model below is using variables 1-5 and 7 as predictors. We ran the model looking at the three closest points and the five closest points to see which gave better results.
 
 
 ```r
@@ -1168,24 +1168,24 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ##      
 ##        No Yes
 ##   No  246   5
-##   Yes  37  12
+##   Yes  38  11
 ##                                           
-##                Accuracy : 0.86            
-##                  95% CI : (0.8155, 0.8972)
-##     No Information Rate : 0.9433          
+##                Accuracy : 0.8567          
+##                  95% CI : (0.8118, 0.8943)
+##     No Information Rate : 0.9467          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.3052          
-##  Mcnemar's Test P-Value : 1.724e-06       
+##                   Kappa : 0.2806          
+##  Mcnemar's Test P-Value : 1.061e-06       
 ##                                           
-##             Sensitivity : 0.8693          
-##             Specificity : 0.7059          
+##             Sensitivity : 0.8662          
+##             Specificity : 0.6875          
 ##          Pos Pred Value : 0.9801          
-##          Neg Pred Value : 0.2449          
-##              Prevalence : 0.9433          
+##          Neg Pred Value : 0.2245          
+##              Prevalence : 0.9467          
 ##          Detection Rate : 0.8200          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7876          
+##       Balanced Accuracy : 0.7768          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1200,25 +1200,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 ## 
 ##      
 ##        No Yes
-##   No  249   2
-##   Yes  41   8
+##   No  248   3
+##   Yes  40   9
 ##                                           
 ##                Accuracy : 0.8567          
 ##                  95% CI : (0.8118, 0.8943)
-##     No Information Rate : 0.9667          
+##     No Information Rate : 0.96            
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2285          
-##  Mcnemar's Test P-Value : 6.834e-09       
+##                   Kappa : 0.2467          
+##  Mcnemar's Test P-Value : 4.021e-08       
 ##                                           
-##             Sensitivity : 0.8586          
-##             Specificity : 0.8000          
-##          Pos Pred Value : 0.9920          
-##          Neg Pred Value : 0.1633          
-##              Prevalence : 0.9667          
-##          Detection Rate : 0.8300          
+##             Sensitivity : 0.8611          
+##             Specificity : 0.7500          
+##          Pos Pred Value : 0.9880          
+##          Neg Pred Value : 0.1837          
+##              Prevalence : 0.9600          
+##          Detection Rate : 0.8267          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.8293          
+##       Balanced Accuracy : 0.8056          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1231,11 +1231,11 @@ dfPreds <- select(dfVal, ID, dfPreds3)
 write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
-The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. The accuracy is 85.67%. Our model is able to predict whether or not an employee will leave 85.67% of the time. The sensitivity of the model is 86.36% meaning that 86.36% of the time when the model labeled a person as not leaving, it was correct. The specificity of the model was 71.43% meaning that when someone did leave, the model was able to predict it 71.43% of the time. 
+The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. We found that there is slight variation in accuracy between runs of the model, because ties are broken at random. So, the accuracy of the k=3 model ranges from 85% and 87%. In other words, our model is able to predict whether or not an employee will leave 85-87% of the time. The sensitivity of the model is around 86%, meaning that when an employee did not leave the company, the model correctly predicted that they stayed about 86% on the time. The specificity of the model was around 71%, meaning that when someone did leave, the model was able to predict it about 71% of the time. 
 
 ### Trends by Job Role
 
-Next, we will look at the variable Job Role an see what trends con be seen. 
+Next, we will look at the variable Job Role and see what trends can be seen. 
 
 
 ```r
@@ -1296,7 +1296,7 @@ kable(Jobs) %>% kable_styling(full_width = FALSE)
 ```r
 ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Satisfaction") +
+  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Job Satisfaction") +
   theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
@@ -1304,7 +1304,7 @@ ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) +
 
 <img src="CaseStudy2_files/figure-html/jobrole_jobsat-1.png" style="display: block; margin: auto;" />
 
-The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. IT seems like the lowest paying jobs, lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
+The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. It appears that the lowest paying jobs, i.e lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
 
 
 ```r
@@ -1315,12 +1315,13 @@ ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) +
   ylab("Monthly Income") + 
   geom_boxplot() +
   stat_summary(fun.y=mean, geom="point", colour="blue") +
-  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 <img src="CaseStudy2_files/figure-html/income_jobsat-1.png" style="display: block; margin: auto;" />
 
-The graph below shows the distribution of age for each job position. Most of the median ages seem to be close together, however management positions, like manager and research director, have higher median ages, while sales representatives have the lowest.
+The graph below shows the distribution of age for each job position. Most of the median ages seem to be close together. However, management positions, like manager and research director, have higher median ages, while sales representatives have the lowest.
 
 
 ```r
@@ -1331,7 +1332,8 @@ ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) +
   ylab("Age") + 
   geom_boxplot() +
   stat_summary(fun.y=mean, geom="point", colour="red") +
-  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 <img src="CaseStudy2_files/figure-html/jobrole_age-1.png" style="display: block; margin: auto;" />
@@ -1349,9 +1351,9 @@ dfRel2 <- dfRel[10:18,]
 
 ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  ggtitle("Attrition Rate per Job Type") + 
+  ggtitle("Attrition Rate by Job Type") + 
   ylab("Attrition Rate") + 
-  xlab("Job Type") + 
+  xlab("Job Role") + 
   theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
@@ -1456,7 +1458,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
 
 # Conclusion
 
-Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with 85.67% accuracy. At first one would think that things like salary amount and jab satisfacation would play a large role in whther or not people stay at a job. Based on the influential variables we found, that qualities of the actual job, like what your role is and how invloved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the varaible Job Role, we saw that job types with higher pay tend to be held by older people and all of the varaible sin our model had a high varaition in attrition rate among thier levels. It can be concluded that this is what makes them could predictors of attrition.
+Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with 85.67% accuracy. At first one would think that things like salary amount and jab satisfacation would play a large role in whether or not people stay at a job. Based on the influential variables we found, that qualities of the actual job, such what your role is and how invloved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the variable Job Role, we saw that job types with higher pay tend to be held by older people and all of the variables in our model had a high variation in attrition rate among their levels. It can be concluded that this is what makes them good predictors of attrition.
 
 # Presentation
 
