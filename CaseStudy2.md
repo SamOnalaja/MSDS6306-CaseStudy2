@@ -1150,7 +1150,7 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 
 ### KNN Classification
 
-We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. We used the top 5 variables in the above table as our predictors in the model. We ran the model looking at the three closest points and the five closest points to see which gave better results.
+We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. We used the top 6 variables in the above table as our predictors in the model. We ran the model looking at the three closest points and the five closest points to see which gave better results.
 
 
 ```r
@@ -1183,25 +1183,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ## 
 ##      
 ##        No Yes
-##   No  247   4
-##   Yes  39  10
+##   No  248   3
+##   Yes  38  11
 ##                                           
-##                Accuracy : 0.8567          
-##                  95% CI : (0.8118, 0.8943)
+##                Accuracy : 0.8633          
+##                  95% CI : (0.8192, 0.9001)
 ##     No Information Rate : 0.9533          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.264           
-##  Mcnemar's Test P-Value : 2.161e-07       
+##                   Kappa : 0.2983          
+##  Mcnemar's Test P-Value : 1.097e-07       
 ##                                           
-##             Sensitivity : 0.8636          
-##             Specificity : 0.7143          
-##          Pos Pred Value : 0.9841          
-##          Neg Pred Value : 0.2041          
+##             Sensitivity : 0.8671          
+##             Specificity : 0.7857          
+##          Pos Pred Value : 0.9880          
+##          Neg Pred Value : 0.2245          
 ##              Prevalence : 0.9533          
-##          Detection Rate : 0.8233          
+##          Detection Rate : 0.8267          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7890          
+##       Balanced Accuracy : 0.8264          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1216,25 +1216,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 ## 
 ##      
 ##        No Yes
-##   No  248   3
+##   No  249   2
 ##   Yes  41   8
 ##                                           
-##                Accuracy : 0.8533          
-##                  95% CI : (0.8082, 0.8914)
-##     No Information Rate : 0.9633          
+##                Accuracy : 0.8567          
+##                  95% CI : (0.8118, 0.8943)
+##     No Information Rate : 0.9667          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.22            
-##  Mcnemar's Test P-Value : 2.434e-08       
+##                   Kappa : 0.2285          
+##  Mcnemar's Test P-Value : 6.834e-09       
 ##                                           
-##             Sensitivity : 0.8581          
-##             Specificity : 0.7273          
-##          Pos Pred Value : 0.9880          
+##             Sensitivity : 0.8586          
+##             Specificity : 0.8000          
+##          Pos Pred Value : 0.9920          
 ##          Neg Pred Value : 0.1633          
-##              Prevalence : 0.9633          
-##          Detection Rate : 0.8267          
+##              Prevalence : 0.9667          
+##          Detection Rate : 0.8300          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7927          
+##       Balanced Accuracy : 0.8293          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1244,10 +1244,14 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 dfPreds <- select(dfVal, ID, dfPreds3)
 
 # Write predictions to csv file
-# write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
+write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
-### Employee Trends
+The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. The accuracy is 85.67%. Our model is able to predict whether or not an employee will leave 85.67% of the time. The sensitivity of the model is 86.36% meaning that 86.36% of the time when the model labeled a person as not leaving, it was correct. The specificity of the model was 71.43% meaning that when someone did leave, the model was able to predict it 71.43% of the time. 
+
+### Trends by Job Role
+
+Next, we will look at the variable Job Role an see what trends con be seen. 
 
 
 ```r
@@ -1255,60 +1259,101 @@ dfPreds <- select(dfVal, ID, dfPreds3)
 dfTrain <- read.csv("CaseStudy2-data.csv")
 # Job satisfaction by group
 Jobs <- group_by(dfTrain, JobRole) %>% summarise(Avg=mean(JobSatisfaction, na.rm=TRUE))
-print(Jobs)
+kable(Jobs) %>% kable_styling(full_width = FALSE)
 ```
 
-```
-## # A tibble: 9 x 2
-##   JobRole                     Avg
-##   <fct>                     <dbl>
-## 1 Healthcare Representative  2.80
-## 2 Human Resources            2.57
-## 3 Laboratory Technician      2.69
-## 4 Manager                    2.69
-## 5 Manufacturing Director     2.75
-## 6 Research Director          2.62
-## 7 Research Scientist         2.80
-## 8 Sales Executive            2.76
-## 9 Sales Representative       2.74
-```
-
-```r
-ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Average Job Satisfaction by Job") + xlab("Job Type") + ylab("Average Satisfaction") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
-```
-
-<img src="CaseStudy2_files/figure-html/jobrole_jobsat-1.png" style="display: block; margin: auto;" />
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> JobRole </th>
+   <th style="text-align:right;"> Avg </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Healthcare Representative </td>
+   <td style="text-align:right;"> 2.801980 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Human Resources </td>
+   <td style="text-align:right;"> 2.567568 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Laboratory Technician </td>
+   <td style="text-align:right;"> 2.685446 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Manager </td>
+   <td style="text-align:right;"> 2.692308 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Manufacturing Director </td>
+   <td style="text-align:right;"> 2.750000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Research Director </td>
+   <td style="text-align:right;"> 2.625000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Research Scientist </td>
+   <td style="text-align:right;"> 2.802521 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Sales Executive </td>
+   <td style="text-align:right;"> 2.755814 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Sales Representative </td>
+   <td style="text-align:right;"> 2.738462 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  coord_flip() + 
-  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Job Satisfaction") +
+  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Satisfaction") +
   theme(legend.position="none") + 
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-<img src="CaseStudy2_files/figure-html/jobrole_jobsat-2.png" style="display: block; margin: auto;" />
+<img src="CaseStudy2_files/figure-html/jobrole_jobsat-1.png" style="display: block; margin: auto;" />
 
-The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
-
+The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. IT seems like the lowest paying jobs, lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
 
 
 ```r
-# Scatterplot of Monthly Income by Job Role
-ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome)) + ggtitle("Income Distribution by Job Type") + xlab("Job Type") + ylab("Monthly Income") + 
-  geom_point(pch = 21, size = 3, color="blue") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+# Distribution of Monthly Income by Job Role
+ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) + 
+  ggtitle("Income Distribution by Job Role") + 
+  xlab("Job Role") + 
+  ylab("Monthly Income") + 
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="blue") +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
 ![](CaseStudy2_files/figure-html/income_jobsat-1.png)<!-- -->
 
+The graph below shows the distribution of age for each job position. Most of the median ages seem to be close together, however management positions, like manager and research director, have higher median ages, while sales representatives have the lowest.
+
+
 ```r
-# Scatterplot of Age by Job Role
-ggplot(dfTrain, aes(x=JobRole, y=Age)) + ggtitle("Age Distribution by Job Type") + xlab("Job Type") + ylab("Age") + 
-  geom_point(pch = 21, size = 3, color="red") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+# Distribution of Age by Job Role
+ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) + 
+  ggtitle("Age Distribution by Job Type") + 
+  xlab("Job Role") + 
+  ylab("Age") + 
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="red") +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-![](CaseStudy2_files/figure-html/income_jobsat-2.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
+The next six graphs will show the attrition rates for each of the levels of the top 6 variables that were included in our KNN model. Note how the attrtion rates are very different for each variable. This is what makes them good indicator variables to use for predicting attrtion.
+
 
 ```r
 # Attrition rate by Job Role
@@ -1317,29 +1362,113 @@ count <- plyr::count(dfTrain$JobRole)
 RelFreq <- freqtable / count$freq
 dfRel <- data.frame(RelFreq)
 dfRel2 <- dfRel[10:18,]
-ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Attrition Rate per Job Type") + ylab("Attrition Rate") + xlab("Job Type") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate per Job Type") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Type") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-![](CaseStudy2_files/figure-html/income_jobsat-3.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 ```r
-ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) + 
-  geom_point(pch = 21, size = 2, color="green") +
+# Attrition rate by job involvement
+freqtable <- table(dfTrain$JobInvolvement, dfTrain$Attrition)
+count <- plyr::count(dfTrain$JobInvolvement)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[5:8,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Job Involvement") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Involvement") + 
+  theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/income_jobsat-4.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-7-2.png)<!-- -->
 
 ```r
-ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome, group=JobSatisfaction)) +
-  geom_boxplot() +
-  stat_summary(fun.y=mean, geom="point", colour="lightgreen") +
+# Attrition rate by job level
+freqtable <- table(dfTrain$JobLevel, dfTrain$Attrition)
+count <- plyr::count(dfTrain$JobLevel)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[6:10,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Job Level") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Level") + 
+  theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/income_jobsat-5.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-7-3.png)<!-- -->
 
+```r
+# Attrition rate by overtime
+freqtable <- table(dfTrain$OverTime, dfTrain$Attrition)
+count <- plyr::count(dfTrain$OverTime)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[3:4,]
 
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Overtime") + 
+  ylab("Attrition Rate") + 
+  xlab("Overtime") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+![](CaseStudy2_files/figure-html/unnamed-chunk-7-4.png)<!-- -->
+
+```r
+# Attrition rate by marital status
+freqtable <- table(dfTrain$MaritalStatus, dfTrain$Attrition)
+count <- plyr::count(dfTrain$MaritalStatus)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[4:6,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Marital Status") + 
+  ylab("Attrition Rate") + 
+  xlab("Marital Status") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+![](CaseStudy2_files/figure-html/unnamed-chunk-7-5.png)<!-- -->
+
+```r
+# Attrition rate by Work-Life Balance
+freqtable <- table(dfTrain$WorkLifeBalance, dfTrain$Attrition)
+count <- plyr::count(dfTrain$WorkLifeBalance)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[5:8,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Work-Life Balance") + 
+  ylab("Attrition Rate") + 
+  xlab("Work-Life Balance") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+![](CaseStudy2_files/figure-html/unnamed-chunk-7-6.png)<!-- -->
 
 # Conclusion
 

@@ -17,10 +17,6 @@ library(caret)
 library(kableExtra)
 ```
 
-# Summary
-
-TODO 
-
 # Introduction
 
 The purpose of this analysis is to explore what variables are good predictors for attrition rates in Fortune 1000 companies. Exploratory analytics will be used to determine which variables are the best predictors of attrition, as well as looking at other trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
@@ -101,7 +97,7 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 
 ### KNN Classification
 
-We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. We used the top 6 variables in the above table as our predictors in the model. We ran the model looking at the three closest points and the five closest points to see which gave better results.
+We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. First, we used the top 5 variables in the above table as our predictors in the model. Adding the 6th variable didn't improve the accuracy, but adding the 7th did. Our model below is using varaibles 1-5 and 7 as predictors. We ran the model looking at the three closest points and the five closest points to see which gave better results.
 
 ```{r}
 # Read in validation data
@@ -131,64 +127,154 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 dfPreds <- select(dfVal, ID, dfPreds3)
 
 # Write predictions to csv file
-# write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
+write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
 The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. The accuracy is 85.67%. Our model is able to predict whether or not an employee will leave 85.67% of the time. The sensitivity of the model is 86.36% meaning that 86.36% of the time when the model labeled a person as not leaving, it was correct. The specificity of the model was 71.43% meaning that when someone did leave, the model was able to predict it 71.43% of the time. 
 
-### Employee Trends
+### Trends by Job Role
+
+Next, we will look at the variable Job Role an see what trends con be seen. 
 
 ```{r jobrole_jobsat, fig.align='center'}
 # Re-load original data
 dfTrain <- read.csv("CaseStudy2-data.csv")
 # Job satisfaction by group
 Jobs <- group_by(dfTrain, JobRole) %>% summarise(Avg=mean(JobSatisfaction, na.rm=TRUE))
-print(Jobs)
-ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Average Job Satisfaction by Job") + xlab("Job Type") + ylab("Average Satisfaction") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
+kable(Jobs) %>% kable_styling(full_width = FALSE)
+
 ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  coord_flip() + 
-  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Job Satisfaction") +
+  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Satisfaction") +
   theme(legend.position="none") + 
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
-
+The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. IT seems like the lowest paying jobs, lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
 
 ```{r income_jobsat}
-# Scatterplot of Monthly Income by Job Role
-ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome)) + ggtitle("Income Distribution by Job Type") + xlab("Job Type") + ylab("Monthly Income") + 
-  geom_point(pch = 21, size = 3, color="blue") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+# Distribution of Monthly Income by Job Role
+ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) + 
+  ggtitle("Income Distribution by Job Role") + 
+  xlab("Job Role") + 
+  ylab("Monthly Income") + 
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="blue") +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+```
 
-# Scatterplot of Age by Job Role
-ggplot(dfTrain, aes(x=JobRole, y=Age)) + ggtitle("Age Distribution by Job Type") + xlab("Job Type") + ylab("Age") + 
-  geom_point(pch = 21, size = 3, color="red") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+The graph below shows the distribution of age for each job position. Most of the median ages seem to be close together, however management positions, like manager and research director, have higher median ages, while sales representatives have the lowest.
 
+```{r}
+# Distribution of Age by Job Role
+ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) + 
+  ggtitle("Age Distribution by Job Type") + 
+  xlab("Job Role") + 
+  ylab("Age") + 
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="red") +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+```
+
+The next six graphs will show the attrition rates for each of the levels of the 6 variables that were included in our KNN model. Note how the attrtion rates are very different for each variable. This is what makes them good indicator variables to use for predicting attrtion.
+
+```{r}
 # Attrition rate by Job Role
 freqtable <- table(dfTrain$JobRole, dfTrain$Attrition)
 count <- plyr::count(dfTrain$JobRole)
 RelFreq <- freqtable / count$freq
 dfRel <- data.frame(RelFreq)
 dfRel2 <- dfRel[10:18,]
-ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Attrition Rate per Job Type") + ylab("Attrition Rate") + xlab("Job Type") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
 
-ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) + 
-  geom_point(pch = 21, size = 2, color="green") +
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate per Job Type") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Type") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+# Attrition rate by job involvement
+freqtable <- table(dfTrain$JobInvolvement, dfTrain$Attrition)
+count <- plyr::count(dfTrain$JobInvolvement)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[5:8,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Job Involvement") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Involvement") + 
+  theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome, group=JobSatisfaction)) +
-  geom_boxplot() +
-  stat_summary(fun.y=mean, geom="point", colour="lightgreen") +
+# Attrition rate by job level
+freqtable <- table(dfTrain$JobLevel, dfTrain$Attrition)
+count <- plyr::count(dfTrain$JobLevel)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[6:10,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Job Level") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Level") + 
+  theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5))
 
+# Attrition rate by overtime
+freqtable <- table(dfTrain$OverTime, dfTrain$Attrition)
+count <- plyr::count(dfTrain$OverTime)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[3:4,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Overtime") + 
+  ylab("Attrition Rate") + 
+  xlab("Overtime") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Attrition rate by marital status
+freqtable <- table(dfTrain$MaritalStatus, dfTrain$Attrition)
+count <- plyr::count(dfTrain$MaritalStatus)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[4:6,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Marital Status") + 
+  ylab("Attrition Rate") + 
+  xlab("Marital Status") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Attrition rate by Work-Life Balance
+freqtable <- table(dfTrain$WorkLifeBalance, dfTrain$Attrition)
+count <- plyr::count(dfTrain$WorkLifeBalance)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[5:8,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Work-Life Balance") + 
+  ylab("Attrition Rate") + 
+  xlab("Work-Life Balance") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
 ```
-
-
 
 # Conclusion
 
-TODO
+Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with 85.67% accuracy. At first one would think that things like salary amount and jab satisfacation would play a large role in whther or not people stay at a job. Based on the influential variables we found, that qualities of the actual job, like what your role is and how invloved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the varaible Job Role, we saw that job types with higher pay tend to be held by older people and all of the varaible sin our model had a high varaition in attrition rate among thier levels. It can be concluded that this is what makes them could predictors of attrition.
 
 # Presentation
 
