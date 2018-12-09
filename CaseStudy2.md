@@ -15,7 +15,7 @@ TODO
 
 # Introduction
 
-The purpose of this analysis is to explore what variables are most associated with attrition levels in Fortune 1000 companies. Exploratory analytics will be used to determine these variables as well as other general trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
+The purpose of this analysis is to explore what variables are good predictors for attrition rates in Fortune 1000 companies. Exploratory analytics will be used to determine which variables are the best predictors of attrition, as well as looking at other trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
 
 # Analysis
 
@@ -27,9 +27,9 @@ The purpose of this analysis is to explore what variables are most associated wi
 dfTrain <- read.csv("CaseStudy2-data.csv")
 ```
 
-If a variable did not have a significant impact on turnover, we would expect that the attrition percentage within a group is the same as the attrition percentage in the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative percentages for turnover for each categorical variable, those groups with high attrition percentages appear to have a strong impact on turnover. 
+If a variable does not have a significant impact on turnover, we would expect that the attrition rate within a group is the same as the attrition rate of the entire dataset. As we see below, in the whole training set 83.9% of employees stayed while 16.1% left. So, as we view the relative rates for turnover for each categorical variable, we would expect variables with high attrition rates to be strong predictors of turnover. 
 
-TODO Explanation of our varaible selection and which ones we left out.
+We excluded a few variables from consideration at the start because they had the same value for every employee and wouldn't be any use as predictors. Then, we took all of the numerical values and broke them up into different levels based on ranges that we chose.
 
 
 ```r
@@ -90,7 +90,7 @@ dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c
 dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
 ```
 
-TODO discuss metric
+The tables generated below are the attrition rate for each level within every variable.
 
 
 ```r
@@ -1008,6 +1008,9 @@ for (var in variables) {
 </tbody>
 </table>
 
+In order to figure out which variables had attrition rates that were the most different from the attirtion rate of the data set as a whole, we had to create a metric. The metric that we used was the average absolute difference in attrition rates. We took the attrition rates under a variable and found the average difference between them and the total attrition rate. The varaibles with the higest average difference are listed in the table below.
+
+
 ```r
 # Get average distance metric for all variables
 AbsDiff <- AbsDiff[order(-AbsDiff$AverageDistance),]
@@ -1147,6 +1150,8 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 
 ### KNN Classification
 
+We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. We used the top 6 variables in the above table as our predictors in the model. We ran the model looking at the three closest points and the five closest points to see which gave better results.
+
 
 ```r
 # Read in validation data
@@ -1178,25 +1183,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ## 
 ##      
 ##        No Yes
-##   No  246   5
-##   Yes  37  12
+##   No  247   4
+##   Yes  38  11
 ##                                           
 ##                Accuracy : 0.86            
 ##                  95% CI : (0.8155, 0.8972)
-##     No Information Rate : 0.9433          
+##     No Information Rate : 0.95            
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.3052          
-##  Mcnemar's Test P-Value : 1.724e-06       
+##                   Kappa : 0.2893          
+##  Mcnemar's Test P-Value : 3.543e-07       
 ##                                           
-##             Sensitivity : 0.8693          
-##             Specificity : 0.7059          
-##          Pos Pred Value : 0.9801          
-##          Neg Pred Value : 0.2449          
-##              Prevalence : 0.9433          
-##          Detection Rate : 0.8200          
+##             Sensitivity : 0.8667          
+##             Specificity : 0.7333          
+##          Pos Pred Value : 0.9841          
+##          Neg Pred Value : 0.2245          
+##              Prevalence : 0.9500          
+##          Detection Rate : 0.8233          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7876          
+##       Balanced Accuracy : 0.8000          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1211,25 +1216,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 ## 
 ##      
 ##        No Yes
-##   No  249   2
-##   Yes  41   8
+##   No  248   3
+##   Yes  43   6
 ##                                           
-##                Accuracy : 0.8567          
-##                  95% CI : (0.8118, 0.8943)
-##     No Information Rate : 0.9667          
+##                Accuracy : 0.8467          
+##                  95% CI : (0.8008, 0.8855)
+##     No Information Rate : 0.97            
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2285          
-##  Mcnemar's Test P-Value : 6.834e-09       
+##                   Kappa : 0.1645          
+##  Mcnemar's Test P-Value : 8.912e-09       
 ##                                           
-##             Sensitivity : 0.8586          
-##             Specificity : 0.8000          
-##          Pos Pred Value : 0.9920          
-##          Neg Pred Value : 0.1633          
-##              Prevalence : 0.9667          
-##          Detection Rate : 0.8300          
+##             Sensitivity : 0.8522          
+##             Specificity : 0.6667          
+##          Pos Pred Value : 0.9880          
+##          Neg Pred Value : 0.1224          
+##              Prevalence : 0.9700          
+##          Detection Rate : 0.8267          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.8293          
+##       Balanced Accuracy : 0.7595          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1239,8 +1244,10 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 dfPreds <- select(dfVal, ID, dfPreds3)
 
 # Write predictions to csv file
-write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
+# write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
+
+The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. The accuracy is 85.67%. Our model is able to predict whether or not an employee will leave 85.67% of the time. The sensitivity of the model is 86.36% meaning that 86.36% of the time when the model labeled a person as not leaving, it was correct. The specificity of the model was 71.43% meaning that when someone did leave, the model was able to predict it 71.43% of the time. 
 
 ### Employee Trends
 
@@ -1339,7 +1346,7 @@ ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 
 ```r
@@ -1360,7 +1367,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 
 ```r
@@ -1380,7 +1387,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 
 ```r
@@ -1400,7 +1407,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 
 ```r
@@ -1420,7 +1427,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 
 ```r
@@ -1440,7 +1447,8 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](CaseStudy2_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
 # Conclusion
 
 TODO
