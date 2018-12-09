@@ -59,20 +59,34 @@ variables <- c("BusinessTravel", "Department", "Education",
               "YearsSinceLastPromotion", "YearsWithCurrManager")
 
 # Turn numerical values into categorical
-dfTrain$Age <- cut(dfTrain$Age, breaks=c(-Inf,30,40,50,Inf),labels=c(1,2,3,4))
-dfTrain$DailyRate <- cut(dfTrain$DailyRate, breaks=c(-Inf,500,1000,Inf),labels=c(1,2,3))
-dfTrain$DistanceFromHome <- cut(dfTrain$DistanceFromHome, breaks=c(-Inf,10,Inf),labels=c(1,2))
-dfTrain$HourlyRate <- cut(dfTrain$HourlyRate, breaks=c(-Inf,65,Inf),labels=c(1,2))
-dfTrain$MonthlyIncome <- cut(dfTrain$MonthlyIncome, breaks=c(-Inf,5000,10000,15000,Inf),labels=c(1,2,3,4))
-dfTrain$MonthlyRate <- cut(dfTrain$MonthlyRate, breaks=c(-Inf,5000,10000,15000,20000,Inf),labels=c(1,2,3,4,5))
-dfTrain$NumCompaniesWorked <- cut(dfTrain$NumCompaniesWorked, breaks=c(-Inf,4,Inf),labels=c(1,2))
-dfTrain$PercentSalaryHike <- cut(dfTrain$PercentSalaryHike, breaks=c(-Inf, 13, 17, Inf), labels=c(1, 2, 3))
-dfTrain$TotalWorkingYears <- cut(dfTrain$TotalWorkingYears, breaks=c(-Inf, 10, 20, Inf), labels=c(1, 2, 3))
-dfTrain$TrainingTimesLastYear <- cut(dfTrain$TrainingTimesLastYear, breaks=c(-Inf, 1, 4, Inf), labels=c(1, 2, 3))
-dfTrain$YearsAtCompany <- cut(dfTrain$YearsAtCompany, breaks=c(-Inf, 5, 15, 25, Inf), labels=c(1, 2, 3, 4))
-dfTrain$YearsInCurrentRole <- cut(dfTrain$YearsInCurrentRole, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
-dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c(-Inf, 2, 7, Inf), labels=c(1, 2, 3))
-dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf), labels=c(1, 2, 3))
+dfTrain$Age <- cut(dfTrain$Age, breaks=c(-Inf,30,40,50,Inf),
+                   labels=c("18-30","30-40","40-50","50-60"))
+dfTrain$DailyRate <- cut(dfTrain$DailyRate, breaks=c(-Inf,500,1000,Inf),
+                         labels=c("0-500","500-1000",">1000"))
+dfTrain$DistanceFromHome <- cut(dfTrain$DistanceFromHome, breaks=c(-Inf,10,Inf),
+                                labels=c("0-10",">10"))
+dfTrain$HourlyRate <- cut(dfTrain$HourlyRate, breaks=c(-Inf,65,Inf),
+                          labels=c("0-65",">65"))
+dfTrain$MonthlyIncome <- cut(dfTrain$MonthlyIncome, breaks=c(-Inf,5000,10000,15000,Inf),
+                             labels=c("0-5000","5000-10000","10000-15000",">15000"))
+dfTrain$MonthlyRate <- cut(dfTrain$MonthlyRate, breaks=c(-Inf,5000,10000,15000,20000,Inf),
+                           labels=c("0-5000","5000-10000","10000-15000","15000-20000",">20000"))
+dfTrain$NumCompaniesWorked <- cut(dfTrain$NumCompaniesWorked, breaks=c(-Inf,4,Inf),
+                                  labels=c("0-4",">4"))
+dfTrain$PercentSalaryHike <- cut(dfTrain$PercentSalaryHike, breaks=c(-Inf, 13, 17, Inf),
+                                 labels=c("0-13","14-17",">17"))
+dfTrain$TotalWorkingYears <- cut(dfTrain$TotalWorkingYears, breaks=c(-Inf, 10, 20, Inf),
+                                 labels=c("0-10","11-20",">20"))
+dfTrain$TrainingTimesLastYear <- cut(dfTrain$TrainingTimesLastYear, breaks=c(-Inf, 1, 4, Inf),
+                                     labels=c("0-1", "2-4", ">4"))
+dfTrain$YearsAtCompany <- cut(dfTrain$YearsAtCompany, breaks=c(-Inf, 5, 15, 25, Inf), 
+                              labels=c("0-5", "6-15", "16-25", ">25"))
+dfTrain$YearsInCurrentRole <- cut(dfTrain$YearsInCurrentRole, breaks=c(-Inf, 5, 10, Inf),
+                                  labels=c("0-5", "6-10", ">10"))
+dfTrain$YearsSinceLastPromotion <- cut(dfTrain$YearsSinceLastPromotion, breaks=c(-Inf, 2, 7, Inf),
+                                       labels=c("0-2", "3-7", ">7"))
+dfTrain$YearsWithCurrManager <- cut(dfTrain$YearsWithCurrManager, breaks=c(-Inf, 5, 10, Inf),
+                                    labels=c("0-5", "6-10", ">10"))
 ```
 
 The tables generated below are the attrition rate for each level within every variable.
@@ -80,13 +94,17 @@ The tables generated below are the attrition rate for each level within every va
 ```{r results="asis"}
 # Make relative frequency tables for categorical variables
 AbsDiff <- data.frame(Variable=character(), AvgDistance=numeric())
+variables <- sort(variables)
 for (var in variables) {
-  print(var)
   freqtable <- table(dfTrain[[var]], dfTrain$Attrition)
   count <- plyr::count(dfTrain[[var]])
   RelFreq <- freqtable / count$freq
-  print(kable(RelFreq,row.names=TRUE) %>% kable_styling(full_width=FALSE))
-  Sum <- sum(abs(RelFreq[,2]-0.1606838))/nrow(RelFreq)
+  RelFreq <- as.data.frame(cbind(var=rownames(RelFreq), RelFreq))
+  RelFreq[,2] <- as.numeric(levels(RelFreq[,2]))
+  RelFreq[,3] <- as.numeric(levels(RelFreq[,3]))
+  colnames(RelFreq)[1] <- paste(var,sep="")
+  print(kable(RelFreq,row.names=FALSE) %>% kable_styling(full_width=FALSE))
+  Sum <- sum(abs(RelFreq[,3]-0.1606838))/nrow(RelFreq)
   AbsDiff <- rbind(AbsDiff, data.frame(Variable=var, AverageDistance=Sum))
 }
 ```
@@ -155,7 +173,7 @@ ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) +
 
 The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
 
-```{r income_jobsat}
+```{r income_jobsat, fig.align='center'}
 # Scatterplot of Monthly Income by Job Role
 ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) + 
   ggtitle("Income Distribution by Job Role") + 
@@ -166,7 +184,7 @@ ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-```{r}
+```{r age_jobrole, fig.align='center'}
 # Scatterplot of Age by Job Role
 ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) + 
   ggtitle("Age Distribution by Job Type") + 
