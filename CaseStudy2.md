@@ -9,10 +9,6 @@ output:
 
 
 
-# Summary
-
-TODO 
-
 # Introduction
 
 The purpose of this analysis is to explore what variables are good predictors for attrition rates in Fortune 1000 companies. Exploratory analytics will be used to determine which variables are the best predictors of attrition, as well as looking at other trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
@@ -1138,7 +1134,7 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 
 ### KNN Classification
 
-We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. We used the top 6 variables in the above table as our predictors in the model. We ran the model looking at the three closest points and the five closest points to see which gave better results.
+We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. First, we used the top 5 variables in the above table as our predictors in the model. Adding the 6th variable didn't improve the accuracy, but adding the 7th did. Our model below is using varaibles 1-5 and 7 as predictors. We ran the model looking at the three closest points and the five closest points to see which gave better results.
 
 
 ```r
@@ -1172,24 +1168,24 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ##      
 ##        No Yes
 ##   No  246   5
-##   Yes  38  11
+##   Yes  37  12
 ##                                           
-##                Accuracy : 0.8567          
-##                  95% CI : (0.8118, 0.8943)
-##     No Information Rate : 0.9467          
+##                Accuracy : 0.86            
+##                  95% CI : (0.8155, 0.8972)
+##     No Information Rate : 0.9433          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.2806          
-##  Mcnemar's Test P-Value : 1.061e-06       
+##                   Kappa : 0.3052          
+##  Mcnemar's Test P-Value : 1.724e-06       
 ##                                           
-##             Sensitivity : 0.8662          
-##             Specificity : 0.6875          
+##             Sensitivity : 0.8693          
+##             Specificity : 0.7059          
 ##          Pos Pred Value : 0.9801          
-##          Neg Pred Value : 0.2245          
-##              Prevalence : 0.9467          
+##          Neg Pred Value : 0.2449          
+##              Prevalence : 0.9433          
 ##          Detection Rate : 0.8200          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7768          
+##       Balanced Accuracy : 0.7876          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1204,25 +1200,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 ## 
 ##      
 ##        No Yes
-##   No  248   3
-##   Yes  42   7
+##   No  249   2
+##   Yes  41   8
 ##                                           
-##                Accuracy : 0.85            
-##                  95% CI : (0.8045, 0.8884)
+##                Accuracy : 0.8567          
+##                  95% CI : (0.8118, 0.8943)
 ##     No Information Rate : 0.9667          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.1926          
-##  Mcnemar's Test P-Value : 1.473e-08       
+##                   Kappa : 0.2285          
+##  Mcnemar's Test P-Value : 6.834e-09       
 ##                                           
-##             Sensitivity : 0.8552          
-##             Specificity : 0.7000          
-##          Pos Pred Value : 0.9880          
-##          Neg Pred Value : 0.1429          
+##             Sensitivity : 0.8586          
+##             Specificity : 0.8000          
+##          Pos Pred Value : 0.9920          
+##          Neg Pred Value : 0.1633          
 ##              Prevalence : 0.9667          
-##          Detection Rate : 0.8267          
+##          Detection Rate : 0.8300          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7776          
+##       Balanced Accuracy : 0.8293          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1232,12 +1228,14 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds5))
 dfPreds <- select(dfVal, ID, dfPreds3)
 
 # Write predictions to csv file
-# write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
+write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
 The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. The accuracy is 85.67%. Our model is able to predict whether or not an employee will leave 85.67% of the time. The sensitivity of the model is 86.36% meaning that 86.36% of the time when the model labeled a person as not leaving, it was correct. The specificity of the model was 71.43% meaning that when someone did leave, the model was able to predict it 71.43% of the time. 
 
-### Employee Trends
+### Trends by Job Role
+
+Next, we will look at the variable Job Role an see what trends con be seen. 
 
 
 ```r
@@ -1298,19 +1296,19 @@ kable(Jobs) %>% kable_styling(full_width = FALSE)
 ```r
 ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  coord_flip() + 
   labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Satisfaction") +
   theme(legend.position="none") + 
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
 <img src="CaseStudy2_files/figure-html/jobrole_jobsat-1.png" style="display: block; margin: auto;" />
 
-The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
+The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. IT seems like the lowest paying jobs, lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
 
 
 ```r
-# Scatterplot of Monthly Income by Job Role
+# Distribution of Monthly Income by Job Role
 ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) + 
   ggtitle("Income Distribution by Job Role") + 
   xlab("Job Role") + 
@@ -1322,9 +1320,11 @@ ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) +
 
 <img src="CaseStudy2_files/figure-html/income_jobsat-1.png" style="display: block; margin: auto;" />
 
+The graph below shows the distribution of age for each job position. Most of the median ages seem to be close together, however management positions, like manager and research director, have higher median ages, while sales representatives have the lowest.
+
 
 ```r
-# Scatterplot of Age by Job Role
+# Distribution of Age by Job Role
 ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) + 
   ggtitle("Age Distribution by Job Type") + 
   xlab("Job Role") + 
@@ -1334,7 +1334,9 @@ ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-<img src="CaseStudy2_files/figure-html/age_jobrole-1.png" style="display: block; margin: auto;" />
+<img src="CaseStudy2_files/figure-html/jobrole_age-1.png" style="display: block; margin: auto;" />
+
+The next six graphs will show the attrition rates for each of the levels of the 6 variables that were included in our KNN model. Note how the attrtion rates are very different for each variable. This is what makes them good indicator variables to use for predicting attrition.
 
 
 ```r
@@ -1347,16 +1349,15 @@ dfRel2 <- dfRel[10:18,]
 
 ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  coord_flip() + 
   ggtitle("Attrition Rate per Job Type") + 
   ylab("Attrition Rate") + 
   xlab("Job Type") + 
   theme(legend.position="none") + 
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
-
+<img src="CaseStudy2_files/figure-html/attrition_graphs-1.png" style="display: block; margin: auto;" />
 
 ```r
 # Attrition rate by job involvement
@@ -1375,8 +1376,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
-
+<img src="CaseStudy2_files/figure-html/attrition_graphs-2.png" style="display: block; margin: auto;" />
 
 ```r
 # Attrition rate by job level
@@ -1395,8 +1395,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-
+<img src="CaseStudy2_files/figure-html/attrition_graphs-3.png" style="display: block; margin: auto;" />
 
 ```r
 # Attrition rate by overtime
@@ -1415,8 +1414,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
-
+<img src="CaseStudy2_files/figure-html/attrition_graphs-4.png" style="display: block; margin: auto;" />
 
 ```r
 # Attrition rate by marital status
@@ -1428,18 +1426,37 @@ dfRel2 <- dfRel[4:6,]
 
 ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  ggtitle("Attrition Rate by Job Involvement") + 
+  ggtitle("Attrition Rate by Marital Status") + 
   ylab("Attrition Rate") + 
-  xlab("Job Involvement") + 
+  xlab("Marital Status") + 
   theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](CaseStudy2_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+<img src="CaseStudy2_files/figure-html/attrition_graphs-5.png" style="display: block; margin: auto;" />
+
+```r
+# Attrition rate by Work-Life Balance
+freqtable <- table(dfTrain$WorkLifeBalance, dfTrain$Attrition)
+count <- plyr::count(dfTrain$WorkLifeBalance)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[5:8,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Work-Life Balance") + 
+  ylab("Attrition Rate") + 
+  xlab("Work-Life Balance") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+<img src="CaseStudy2_files/figure-html/attrition_graphs-6.png" style="display: block; margin: auto;" />
 
 # Conclusion
 
-TODO
+Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with 85.67% accuracy. At first one would think that things like salary amount and jab satisfacation would play a large role in whther or not people stay at a job. Based on the influential variables we found, that qualities of the actual job, like what your role is and how invloved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the varaible Job Role, we saw that job types with higher pay tend to be held by older people and all of the varaible sin our model had a high varaition in attrition rate among thier levels. It can be concluded that this is what makes them could predictors of attrition.
 
 # Presentation
 
