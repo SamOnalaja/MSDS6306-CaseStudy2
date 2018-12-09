@@ -134,49 +134,125 @@ write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 dfTrain <- read.csv("CaseStudy2-data.csv")
 # Job satisfaction by group
 Jobs <- group_by(dfTrain, JobRole) %>% summarise(Avg=mean(JobSatisfaction, na.rm=TRUE))
-print(Jobs)
-ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Average Job Satisfaction by Job") + xlab("Job Type") + ylab("Average Satisfaction") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
+kable(Jobs) %>% kable_styling(full_width = FALSE)
+
 ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
   geom_bar(stat='identity', colour = 'black') + 
   coord_flip() + 
-  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Job Satisfaction") +
+  labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Satisfaction") +
   theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
 The average job satisfaction for each position is fairly close together. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. 
 
-
 ```{r income_jobsat}
 # Scatterplot of Monthly Income by Job Role
-ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome)) + ggtitle("Income Distribution by Job Type") + xlab("Job Type") + ylab("Monthly Income") + 
-  geom_point(pch = 21, size = 3, color="blue") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+ggplot(dfTrain, aes(x=JobRole, y=MonthlyIncome, group=JobRole)) + 
+  ggtitle("Income Distribution by Job Role") + 
+  xlab("Job Role") + 
+  ylab("Monthly Income") + 
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="blue") +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+```
 
+```{r}
 # Scatterplot of Age by Job Role
-ggplot(dfTrain, aes(x=JobRole, y=Age)) + ggtitle("Age Distribution by Job Type") + xlab("Job Type") + ylab("Age") + 
-  geom_point(pch = 21, size = 3, color="red") + theme(axis.text.x = element_text(angle = 50, hjust = 1))
+ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) + 
+  ggtitle("Age Distribution by Job Type") + 
+  xlab("Job Role") + 
+  ylab("Age") + 
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", colour="red") +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+```
 
+```{r}
 # Attrition rate by Job Role
 freqtable <- table(dfTrain$JobRole, dfTrain$Attrition)
 count <- plyr::count(dfTrain$JobRole)
 RelFreq <- freqtable / count$freq
 dfRel <- data.frame(RelFreq)
 dfRel2 <- dfRel[10:18,]
-ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + geom_bar(stat='identity', colour = 'black') + coord_flip() + ggtitle("Attrition Rate per Job Type") + ylab("Attrition Rate") + xlab("Job Type") + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5))
 
-ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome)) + 
-  geom_point(pch = 21, size = 2, color="green") +
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  coord_flip() + 
+  ggtitle("Attrition Rate per Job Type") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Type") + 
+  theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5))
-
-ggplot(dfTrain, aes(x=JobSatisfaction, y=MonthlyIncome, group=JobSatisfaction)) +
-  geom_boxplot() +
-  stat_summary(fun.y=mean, geom="point", colour="lightgreen") +
-  theme(plot.title = element_text(hjust = 0.5))
-
 ```
 
+```{r}
+# Attrition rate by job involvement
+freqtable <- table(dfTrain$JobInvolvement, dfTrain$Attrition)
+count <- plyr::count(dfTrain$JobInvolvement)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[5:8,]
 
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Job Involvement") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Involvement") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
 
+```{r}
+# Attrition rate by job level
+freqtable <- table(dfTrain$JobLevel, dfTrain$Attrition)
+count <- plyr::count(dfTrain$JobLevel)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[6:10,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Job Level") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Level") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+# Attrition rate by overtime
+freqtable <- table(dfTrain$OverTime, dfTrain$Attrition)
+count <- plyr::count(dfTrain$OverTime)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[3:4,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Overtime") + 
+  ylab("Attrition Rate") + 
+  xlab("Overtime") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+# Attrition rate by marital status
+freqtable <- table(dfTrain$MaritalStatus, dfTrain$Attrition)
+count <- plyr::count(dfTrain$MaritalStatus)
+RelFreq <- freqtable / count$freq
+dfRel <- data.frame(RelFreq)
+dfRel2 <- dfRel[4:6,]
+
+ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
+  geom_bar(stat='identity', colour = 'black') + 
+  ggtitle("Attrition Rate by Job Involvement") + 
+  ylab("Attrition Rate") + 
+  xlab("Job Involvement") + 
+  theme(legend.position="none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
 # Conclusion
 
 TODO
