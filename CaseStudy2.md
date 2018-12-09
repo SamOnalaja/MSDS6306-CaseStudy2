@@ -1179,25 +1179,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))
 ## 
 ##      
 ##        No Yes
-##   No  246   5
-##   Yes  37  12
+##   No  247   4
+##   Yes  39  10
 ##                                           
-##                Accuracy : 0.86            
-##                  95% CI : (0.8155, 0.8972)
-##     No Information Rate : 0.9433          
+##                Accuracy : 0.8567          
+##                  95% CI : (0.8118, 0.8943)
+##     No Information Rate : 0.9533          
 ##     P-Value [Acc > NIR] : 1               
 ##                                           
-##                   Kappa : 0.3052          
-##  Mcnemar's Test P-Value : 1.724e-06       
+##                   Kappa : 0.264           
+##  Mcnemar's Test P-Value : 2.161e-07       
 ##                                           
-##             Sensitivity : 0.8693          
-##             Specificity : 0.7059          
-##          Pos Pred Value : 0.9801          
-##          Neg Pred Value : 0.2449          
-##              Prevalence : 0.9433          
-##          Detection Rate : 0.8200          
+##             Sensitivity : 0.8636          
+##             Specificity : 0.7143          
+##          Pos Pred Value : 0.9841          
+##          Neg Pred Value : 0.2041          
+##              Prevalence : 0.9533          
+##          Detection Rate : 0.8233          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.7876          
+##       Balanced Accuracy : 0.7890          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -1243,7 +1243,7 @@ dfPreds <- select(dfVal, ID, dfPreds3)
 write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
-The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. The accuracy is 85.67%. Our model is able to predict whether or not an employee will leave 85.67% of the time. The sensitivity of the model is 86.36% meaning that 86.36% of the time when the model labeled a person as not leaving, it was correct. The specificity of the model was 71.43% meaning that when someone did leave, the model was able to predict it 71.43% of the time. 
+The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. The accuracy is aaproximately 86%. Our model is able to predict whether or not an employee will leave about 86% of the time. The sensitivity of the model is approximately 87% meaning that about 87%% of the time when the model labeled a person as not leaving, it was correct. The specificity of the model was about 75% meaning that when someone did leave, the model was able to predict it 75% of the time.
 
 ### Trends by Job Role
 
@@ -1362,9 +1362,9 @@ dfRel2 <- dfRel[10:18,]
 
 ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  ggtitle("Attrition Rate per Job Type") + 
+  ggtitle("Attrition Rate per Job Role") + 
   ylab("Attrition Rate") + 
-  xlab("Job Type") + 
+  xlab("Job Role") + 
   theme(legend.position="none") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
@@ -1469,7 +1469,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
 
 # Conclusion
 
-Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with 85.67% accuracy. At first one would think that things like salary amount and jab satisfacation would play a large role in whther or not people stay at a job. Based on the influential variables we found, that qualities of the actual job, like what your role is and how invloved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the varaible Job Role, we saw that job types with higher pay tend to be held by older people and all of the varaible sin our model had a high varaition in attrition rate among thier levels. It can be concluded that this is what makes them could predictors of attrition.
+Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with about 86% accuracy. At first one would think that things like salary amount and jab satisfacation would play a large role in whther or not people stay at a job. Based on the influential variables we found, that qualities of the actual job, like what your role is and how invloved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the varaible Job Role, we saw that job types with higher pay tend to be held by older people and all of the varaible sin our model had a high varaition in attrition rate among thier levels. It can be concluded that this is what makes them could predictors of attrition.
 
 # Presentation
 
