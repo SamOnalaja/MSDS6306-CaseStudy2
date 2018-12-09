@@ -129,10 +129,6 @@ $(document).ready(function () {
 </div>
 
 
-<div id="summary" class="section level1">
-<h1>Summary</h1>
-<p>TODO</p>
-</div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>The purpose of this analysis is to explore what variables are good predictors for attrition rates in Fortune 1000 companies. Exploratory analytics will be used to determine which variables are the best predictors of attrition, as well as looking at other trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.</p>
@@ -2179,7 +2175,7 @@ PerformanceRating
 </div>
 <div id="knn-classification" class="section level3">
 <h3>KNN Classification</h3>
-<p>We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. We used the top 6 variables in the above table as our predictors in the model. We ran the model looking at the three closest points and the five closest points to see which gave better results.</p>
+<p>We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. First, we used the top 5 variables in the above table as our predictors in the model. Adding the 6th variable didn’t improve the accuracy, but adding the 7th did. Our model below is using varaibles 1-5 and 7 as predictors. We ran the model looking at the three closest points and the five closest points to see which gave better results.</p>
 <pre class="r"><code># Read in validation data
 dfVal &lt;- read.csv(&quot;CaseStudy2Validation.csv&quot;)
 
@@ -2206,25 +2202,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))</code></pre>
 ## 
 ##      
 ##        No Yes
-##   No  248   3
-##   Yes  38  11
+##   No  246   5
+##   Yes  37  12
 ##                                           
-##                Accuracy : 0.8633          
-##                  95% CI : (0.8192, 0.9001)
-##     No Information Rate : 0.9533          
+##                Accuracy : 0.86            
+##                  95% CI : (0.8155, 0.8972)
+##     No Information Rate : 0.9433          
 ##     P-Value [Acc &gt; NIR] : 1               
 ##                                           
-##                   Kappa : 0.2983          
-##  Mcnemar's Test P-Value : 1.097e-07       
+##                   Kappa : 0.3052          
+##  Mcnemar's Test P-Value : 1.724e-06       
 ##                                           
-##             Sensitivity : 0.8671          
-##             Specificity : 0.7857          
-##          Pos Pred Value : 0.9880          
-##          Neg Pred Value : 0.2245          
-##              Prevalence : 0.9533          
-##          Detection Rate : 0.8267          
+##             Sensitivity : 0.8693          
+##             Specificity : 0.7059          
+##          Pos Pred Value : 0.9801          
+##          Neg Pred Value : 0.2449          
+##              Prevalence : 0.9433          
+##          Detection Rate : 0.8200          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.8264          
+##       Balanced Accuracy : 0.7876          
 ##                                           
 ##        'Positive' Class : No              
 ## </code></pre>
@@ -2233,25 +2229,25 @@ confusionMatrix(table(dfVal$Attrition, dfVal$dfPreds3))</code></pre>
 ## 
 ##      
 ##        No Yes
-##   No  249   2
-##   Yes  41   8
+##   No  248   3
+##   Yes  42   7
 ##                                           
-##                Accuracy : 0.8567          
-##                  95% CI : (0.8118, 0.8943)
+##                Accuracy : 0.85            
+##                  95% CI : (0.8045, 0.8884)
 ##     No Information Rate : 0.9667          
 ##     P-Value [Acc &gt; NIR] : 1               
 ##                                           
-##                   Kappa : 0.2285          
-##  Mcnemar's Test P-Value : 6.834e-09       
+##                   Kappa : 0.1926          
+##  Mcnemar's Test P-Value : 1.473e-08       
 ##                                           
-##             Sensitivity : 0.8586          
-##             Specificity : 0.8000          
-##          Pos Pred Value : 0.9920          
-##          Neg Pred Value : 0.1633          
+##             Sensitivity : 0.8552          
+##             Specificity : 0.7000          
+##          Pos Pred Value : 0.9880          
+##          Neg Pred Value : 0.1429          
 ##              Prevalence : 0.9667          
-##          Detection Rate : 0.8300          
+##          Detection Rate : 0.8267          
 ##    Detection Prevalence : 0.8367          
-##       Balanced Accuracy : 0.8293          
+##       Balanced Accuracy : 0.7776          
 ##                                           
 ##        'Positive' Class : No              
 ## </code></pre>
@@ -2382,7 +2378,7 @@ ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) +
   stat_summary(fun.y=mean, geom=&quot;point&quot;, colour=&quot;red&quot;) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))</code></pre>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>The next six graphs will show the attrition rates for each of the levels of the top 6 variables that were included in our KNN model. Note how the attrtion rates are very different for each variable. This is what makes them good indicator variables to use for predicting attrtion.</p>
+<p>The next six graphs will show the attrition rates for each of the levels of the 6 variables that were included in our KNN model. Note how the attrtion rates are very different for each variable. This is what makes them good indicator variables to use for predicting attrition.</p>
 <pre class="r"><code># Attrition rate by Job Role
 freqtable &lt;- table(dfTrain$JobRole, dfTrain$Attrition)
 count &lt;- plyr::count(dfTrain$JobRole)
@@ -2478,7 +2474,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>TODO</p>
+<p>Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with 85.67% accuracy. At first one would think that things like salary amount and jab satisfacation would play a large role in whther or not people stay at a job. Based on the influential variables we found, that qualities of the actual job, like what your role is and how invloved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the varaible Job Role, we saw that job types with higher pay tend to be held by older people and all of the varaible sin our model had a high varaition in attrition rate among thier levels. It can be concluded that this is what makes them could predictors of attrition.</p>
 </div>
 <div id="presentation" class="section level1">
 <h1>Presentation</h1>

@@ -151,6 +151,7 @@ ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
+
 The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. IT seems like the lowest paying jobs, lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
 
 ```{r income_jobsat}
@@ -177,7 +178,7 @@ ggplot(dfTrain, aes(x=JobRole, y=Age, group=JobRole)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-The next six graphs will show the attrition rates for each of the levels of the 6 variables that were included in our KNN model. Note how the attrtion rates are very different for each variable. This is what makes them good indicator variables to use for predicting attrtion.
+The next six graphs will show the attrition rates for each of the levels of the 6 variables that were included in our KNN model. Note how the attrtion rates are very different for each variable. This is what makes them good indicator variables to use for predicting attrition.
 
 ```{r}
 # Attrition rate by Job Role
