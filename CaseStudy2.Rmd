@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(dplyr)
 library(knitr)
@@ -19,7 +19,7 @@ library(kableExtra)
 
 # Introduction
 
-The purpose of this analysis is to explore what variables are good predictors for attrition rates in Fortune 1000 companies. Exploratory analytics will be used to determine which variables are the best predictors of attrition, as well as looking at other trends associated with specific jobs. Finally, we will create a model that will predict whether or not an employee will leave the company voluntarily.
+The purpose of this analysis is to explore what variables are good predictors for attrition rates in Fortune 1000 companies. Exploratory analytics will be used to determine which variables are the best predictors of attrition, and we will create a model that will predict whether or not an employee will leave their company voluntarily. Finally, we will look at other trends associated with specific jobs and attrition rates.
 
 # Analysis
 
@@ -115,7 +115,7 @@ kable(AbsDiff,row.names=FALSE) %>% kable_styling(full_width=FALSE)
 
 ### KNN Classification
 
-We used a KNN in model to predict whether or not an employee will leave for employees in a new data set. First, we used the top 5 variables in the above table as our predictors in the model. Adding the 6th variable didn't improve the accuracy, but adding the 7th did. Our model below is using variables 1-5 and 7 as predictors. We ran the model looking at the three closest points and the five closest points to see which gave better results.
+We used a k-nearest neighbors classification model to predict whether or not employees from a new data set left their company. First, we used the top 5 variables in the above table as our predictors in the model. Adding the 6th variable didn't improve the accuracy, but adding the 7th did. Our model below uses variables 1-5 and 7 as predictors. We ran the model looking at the three closest points and the five closest points to see which gave better results.
 
 ```{r}
 # Read in validation data
@@ -148,7 +148,7 @@ dfPreds <- select(dfVal, ID, dfPreds3)
 write.csv(dfPreds, "CaseStudy2Predictions_Ludlow_Rollins.csv")
 ```
 
-The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. We found that there is slight variation in accuracy between runs of the model, because ties are broken at random. So, the accuracy of the k=3 model ranges from 85% and 87%. In other words, our model is able to predict whether or not an employee will leave 85-87% of the time. The sensitivity of the model is around 86%, meaning that when an employee did not leave the company, the model correctly predicted that they stayed about 86% on the time. The specificity of the model was around 71%, meaning that when someone did leave, the model was able to predict it about 71% of the time. 
+The KNN model that looks at the three closest data points to the test data point has a higher accuracy than the model that looks at 5. We found that there is slight variation in accuracy between runs of the model, because ties are broken at random. So, the accuracy of the k=3 model ranges between 85% and 87%. In other words, our model is able to predict whether or not an employee will leave 85-87% of the time. The sensitivity of the model is around 86%, meaning that when an employee did not leave the company, the model correctly predicted that they stayed about 86% on the time. The specificity of the model was around 71%, meaning that when someone did leave, the model was able to predict it about 71% of the time.
 
 ### Trends by Job Role
 
@@ -158,10 +158,10 @@ Next, we will look at the variable Job Role and see what trends are present.
 # Re-load original data
 dfTrain <- read.csv("CaseStudy2-data.csv")
 # Job satisfaction by group
-Jobs <- group_by(dfTrain, JobRole) %>% summarise(Avg=mean(JobSatisfaction, na.rm=TRUE))
+Jobs <- group_by(dfTrain, JobRole) %>% summarise(AverageSatisfaction=mean(JobSatisfaction, na.rm=TRUE))
 kable(Jobs) %>% kable_styling(full_width = FALSE)
 
-ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) + 
+ggplot(data=Jobs, aes(x=JobRole, y=AverageSatisfaction, fill=JobRole)) + 
   geom_bar(stat='identity', colour = 'black') + 
   labs(title="Mean Job Satisfaction by Role", x="Job Role", y="Mean Job Satisfaction") +
   theme(legend.position="none") + 
@@ -169,7 +169,7 @@ ggplot(data=Jobs, aes(x=JobRole, y=Avg, fill=JobRole)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1))
 ```
 
-The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest is Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. It appears that the lowest paying jobs, i.e lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
+The graph above shows the average job satisfaction for each job position. The lowest is Human Resources at 2.57 and the highest are Research Scientist and Healthcare Representative at 2.80. The next graph shows the distribution of monthly income by job position. Managers and research directors are paid the most. It appears that the lowest paying jobs, i.e lab technician, sales representative, and research scientist, also have the smallest standard deviations. 
 
 ```{r income_jobsat, fig.align='center'}
 # Distribution of Monthly Income by Job Role
@@ -209,7 +209,7 @@ dfRel2 <- dfRel[10:18,]
 
 ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) + 
   geom_bar(stat='identity', colour = 'black') + 
-  ggtitle("Attrition Rate per Job Role") + 
+  ggtitle("Attrition Rate by Job Role") + 
   ylab("Attrition Rate") + 
   xlab("Job Role") + 
   theme(legend.position="none") + 
@@ -294,7 +294,7 @@ ggplot(data=dfRel2, aes(x=Var1, y=Freq, fill=Var1)) +
 
 # Conclusion
 
-Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave with 85.67% accuracy. At first, one would think that things like salary amount and job satisfacation would play a large role in whether or not people stay at a job. Based on the influential variables we found, qualities of the actual job, like what your role is and how involved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the variable Job Role, we saw that job types with higher pay tend to be held by older people and all of the variables in our model had a high variation in attrition rate among their levels. It can be concluded that this is what makes them good predictors of attrition.
+Using the variables Overtime, JobRole, JobLevel, JobInvolvement, MaritalStatus, and WorkLifeBalance, we created a model that was able to predict whether or not an employee will leave their company with about 86% accuracy. At first, one would think that things like salary amount and job satisfacation would play a large role in whether or not people stay at a job. Based on the influential variables we found, qualities of the actual job, like what your role is and how involved you are, play a bigger role. Having overtime seems to be associated with high attrition rate and single people seem to leave jobs more than married or divorced people. Focusing on the variable Job Role, we saw that job types with higher pay tend to be held by older people and all of the variables in our model had a high variation in attrition rate among their levels. It can be concluded that this is what makes them good predictors of attrition.
 
 # Presentation
 
@@ -302,4 +302,4 @@ This write-up is supplemented by video presentations from both Meredith and Kris
 
 Meredith: https://youtu.be/8XBRCE_n3Dw
 
-Kristen: 
+Kristen: https://youtu.be/9L9gQXNmSG0
